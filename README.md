@@ -52,13 +52,13 @@ Reference for each minted data source for your output data.  For example:
 
 | Model | Version | Repository Link | DOI |
 |-------|---------|-----------------|-----|
-| PyFlowline | version | https://doi.org/10.5281/zenodo.6604337 | link to DOI dataset |
+| PyEarth | version | https://github.com/changliao1025/pyearth | doi.org/10.5281/zenodo.6368652 |
+
 
 ## Reproduce my experiment
 
 You need to follow three major steps to reproduce this study: 
 
-1. Run the [MPAS model](https://github.com/DOE-ICoM/mpas_mosart/blob/main/workflow/jigsaw_mpas.md)
 
 
 ## Reproduce my figures
