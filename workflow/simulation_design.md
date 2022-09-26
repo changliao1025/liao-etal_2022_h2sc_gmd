@@ -14,6 +14,7 @@
 | 5 | H2SC-based |30 year (1980-2009) |Gage height time invariant 1.0 m | A custmoized ELM-MOSART simulation, use Case 1 as initial  | The role of gage height in hillslope-based model |
 | 6 | H2SC-based |30 year (1980-2009) |Gage height time invariant 10.0 m | A custmoized ELM-MOSART simulation, use Case 1 as initial  | The role of gage height in hillslope-based model |
 | 7 | H2SC-based |30 year (1980-2009) |Gage height time invariant 10.0 m | A custmoized ELM-MOSART simulation, use Case 1 as initial  | The role of gage height in hillslope-based model |
+| 8 | H2SC-based |30 year (1980-2009) |Surface slope 10 times | A custmoized ELM-MOSART simulation, use Case 1 as initial  | The role of surface slope in hillslope-based model |
 
 
 
@@ -29,3 +30,4 @@
 | 5 | 2,5,6 |  The role of gage height in subsurface drainage  |
 | 6 | 2,5,6 |  The role of gage height in WTD  |
 | 7 | 2,5,6 |  The role of gage height in WTD  |
+| 8 | 2,5,6 |  The role of surface slope in WTD  |
