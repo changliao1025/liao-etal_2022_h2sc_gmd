@@ -8,12 +8,13 @@
 |---|-|--|---------|-----------------|--|
 | 0 | Default WT-based | 90 years (1890-1979) |Default | A simple custmoized ELM simulation | For ELM spinup |
 | 1 | Default WT-based |30 year (1980-2009)| Default | A custmoized ELM simulation, use Case 0 as initial | For default transient |
-| 2 | H2SC-based |30 year (1980-2009) |Default (slope + anisotropy ratio) | A custmoized ELM-MOSART simulation, use Case 0 as initial  | Baseline hillslope-based model |
-| 3 | H2SC-based |30 year (1980-2009) |WT slope as surface slope| A custmoized ELM-MOSART simulation, use Case 1 as initial  | The role of slope in hillslope-based model |
-| 4 | H2SC-based |30 year (1980-2009) |Anisotropy ratio as 1.0 | A custmoized ELM-MOSART simulation, use Case 1 as initial  | The role of anisotropy ratio in hillslope-based model |
-| 5 | H2SC-based |30 year (1980-2009) |Gage height time invariant 1.0 m | A custmoized ELM-MOSART simulation, use Case 1 as initial  | The role of gage height in hillslope-based model |
-| 6 | H2SC-based |30 year (1980-2009) |Gage height time invariant 10.0 m | A custmoized ELM-MOSART simulation, use Case 1 as initial  | The role of gage height in hillslope-based model |
-| 7 | H2SC-based |30 year (1980-2009) |Gage height time invariant 10.0 m | A custmoized ELM-MOSART simulation, use Case 1 as initial  | The role of gage height in hillslope-based model |
+| 2 | HLG-based |30 year (1980-2009) |Default (slope + anisotropy ratio) | A custmoized ELM-MOSART simulation, use Case 0 as initial  | Baseline hillslope-based model |
+| 3 | HLG-based |30 year (1980-2009) |Surface slope 10 times| A custmoized ELM-MOSART simulation, use Case 0 as initial  | The role of slope in hillslope-based model |
+| 4 | HLG-based |30 year (1980-2009) |WT slope as surface slope| A custmoized ELM-MOSART simulation, use Case 0 as initial  | The role of slope in hillslope-based model |
+| 5 | HLG-based |30 year (1980-2009) |Anisotropy ratio as 1.0 | A custmoized ELM-MOSART simulation, use Case 0 as initial  | The role of anisotropy ratio in hillslope-based model |
+| 6 | HLG-based |30 year (1980-2009) |Gage height time invariant 1.0 m | A custmoized ELM-MOSART simulation, use Case 0 as initial  | The role of gage height in hillslope-based model |
+| 7 | HLG-based |30 year (1980-2009) |Gage height time invariant 10.0 m | A custmoized ELM-MOSART simulation, use Case 0 as initial  | The role of gage height in hillslope-based model |
+| 8 | HLG-based |30 year (1980-2009) |WT slope as surface slope + Gage height time invariant 10.0 m | A custmoized ELM-MOSART simulation, use Case 0 as initial  | The role of gage height in hillslope-based model |
 
 
 
