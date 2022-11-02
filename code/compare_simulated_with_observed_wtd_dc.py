@@ -104,13 +104,12 @@ for i in range(ncase):
         dummy[dummy_index] = dData_max
         dummy_index = np.where(dummy < dData_min)
         dummy[dummy_index] = dData_min  
-        
+
         aData_all.append(dummy)
         
         pass
 
 #get 
-
 
 aPercentiles_in = np.arange(10, 90, 15)
 aInterval = cgpercentiles(aData_all, aPercentiles_in, missing_value_in = -9999)  
