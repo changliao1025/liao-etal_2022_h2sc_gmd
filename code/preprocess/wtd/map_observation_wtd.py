@@ -4,7 +4,7 @@ from pyearth.system.define_global_variables import *
 from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file
 from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
-from pyearth.visual.map.map_raster_data import map_raster_data
+from pyearth.visual.map.raster.map_raster_data import map_raster_data
 def map_observation_wtd():
 
     #new wtd
@@ -23,6 +23,7 @@ def map_observation_wtd():
     sFilename_out ='/qfs/people/liao313/data/e3sm/amazon/elm/' + 'wtd_extract' + sExtension_png
     sTitle_in = 'Water table depth'
     sUnit_in = 'Unit: m'
+    sColormap= 'Spectral_r'
     iFlag_scientific_notation_colorbar_in= 0 
     dData_max_in =20
     dData_min_in = 0
@@ -35,8 +36,9 @@ def map_observation_wtd():
                                   iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
                                        dData_max_in = dData_max_in,\
                                           dData_min_in = dData_min_in,
+                                          sColormap_in=sColormap,\
                                   dMissing_value_in = -9999,\
-                                    aLegend_in=aLegend)
+                                    aLabel_legend_in=aLegend)
     #new wtd
     sFilename_in = '/qfs/people/liao313/data/e3sm/amazon/elm/' + 'wtd_extract_new' + sExtension_tiff
     
@@ -64,8 +66,9 @@ def map_observation_wtd():
                                   iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
                                        dData_max_in = dData_max_in,\
                                           dData_min_in = dData_min_in,
+                                           sColormap_in=sColormap,\
                                   dMissing_value_in = -9999,\
-                                    aLegend_in=aLegend)
+                                    aLabel_legend_in=aLegend)
 
     index = np.where(aData_out1 == -9999)
     aData_out = aData_out1- aData_out2

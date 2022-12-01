@@ -2,9 +2,7 @@ import numpy as np
 from osgeo import gdal, osr #the default operator
 from pyearth.system.define_global_variables import *   
 from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
-from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file
-from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
-from pyearth.visual.map.map_raster_data import map_raster_data
+from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 from pye3sm.elm.general.structured.twod.map.elm_map_variable_difference_w_observation_dc_2d import elm_map_variable_difference_w_observation_dc_2d
@@ -16,6 +14,9 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 sFilename_in = '/qfs/people/liao313/data/e3sm/amazon/elm/' + 'wtd_extract' + sExtension_tiff
     
 aData_obs, dPixelWidth, dOriginX, dOriginY, nrow, ncolumn, dMissing_value, pGeotransform, pProjection,  pSpatial_reference = gdal_read_geotiff_file(sFilename_in)
+wtd_max = 45.0
+aData_obs[np.where(aData_obs>wtd_max )]=wtd_max
+
 dLon_min = dOriginX
 dResolution_x= dPixelWidth
 dLon_max = dLon_min + ncolumn * dPixelWidth
@@ -43,10 +44,10 @@ sModel = 'e3sm'
 sRegion='amazon'
 
 
-aTitle= [ 'Water table depth' ]
+aTitle= [ 'Water table depth differences' ]
 aUnit = [r'Unit: m']
-dData_min = -15
-dData_max = 15
+dData_min = -35
+dData_max = 5
 aConversion = [1]
 
 sExtend='both'
@@ -98,12 +99,13 @@ for i in range(ncase):
         nan_index = np.where(aData_obs ==  -9999)
 
         dummy=dummy_y-aData_obs
-        dummy[nan_index] = -9999
+        
 
         dummy_index = np.where(dummy > dData_max)
         dummy[dummy_index] = dData_max
         dummy_index = np.where(dummy < dData_min)
         dummy[dummy_index] = dData_min  
+        dummy[nan_index] = -9999
 
         aData_all.append(dummy)
         
@@ -111,8 +113,13 @@ for i in range(ncase):
 
 #get 
 
-aPercentiles_in = np.arange(10, 90, 15)
+aPercentiles_in = np.arange(10, 90, 13)
 aInterval = cgpercentiles(aData_all, aPercentiles_in, missing_value_in = -9999)  
+
+#aInterval = np.linspace(dData_min, dData_max, num=7)
+aColor = create_diverge_rgb_color_hex(  len(aInterval) +1  )
+aColor.reverse()
+
 for iCase_index in ( aCase_index ):
     for iVariable in np.arange(0, nvariable):
         sVariable = aVariable[iVariable]
@@ -150,6 +157,7 @@ for iCase_index in ( aCase_index ):
                 sExtend_in = sExtend,\
             sUnit_in = sUnit,\
             sTitle_in=  sTitle,
+              aColor_in=aColor,\
             aLegend_in = aLegend )
         
         print(iCase_index)

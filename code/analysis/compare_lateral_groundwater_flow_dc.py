@@ -1,12 +1,8 @@
 
 
-import os, sys
-from re import I
-import argparse
-import subprocess
 import numpy as np
-import multiprocessing
 
+from os.path import realpath
 
 from pyearth.system.define_global_variables import *
  
@@ -19,6 +15,8 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_config
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 
+
+
 sDate = '20220701'
 
 
@@ -28,24 +26,23 @@ iIndex_end=58
 iCase_index_start = iIndex_start
 iCase_index_end = iIndex_end
 
+iFlag_scientific_notation_colorbar_in = 1
 
-
-aVariable = ['ZWT']
-aFlag_scientific_notation_colorbar=[0]
+aVariable = ['QDRAI']
+aFlag_scientific_notation_colorbar=[1]
 iYear_start = 2000
 iYear_end = 2009
 sModel = 'e3sm'
 sRegion='amazon'
 
 
-aTitle= [ 'Water table depth' ]
-aUnit = [r'Unit: m']
-aData_min = [-3]
-aData_max = [3]
+aTitle= [ r'Subsurface runoff' ]
+aUnit = [ r'Units: mm/s']
+aData_min = [-1E-5]
+aData_max = [1E-5]
 aConversion = [1]
 
 sExtend='both'
-
 
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
@@ -55,6 +52,8 @@ oE3SM = pye3sm(aParameter_e3sm)
 aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 ncase= len(aCase_index)
 nvariable = len(aVariable)
+
+#gather data
 
 aData_all = list()
 
@@ -88,8 +87,8 @@ for i in range(ncase):
         oCase_x = pycase(aParameter_case)    
         aData_out_x = elm_retrieve_variable_2d(  oCase_x,\
                 iFlag_monthly_in =0,\
-                    iFlag_annual_mean_in=1,\
-                iFlag_annual_total_in= 0     )
+                    iFlag_annual_mean_in=0,\
+                iFlag_annual_total_in= 1     )
 
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                        iCase_index_in =  iCase_index ,\
@@ -106,11 +105,11 @@ for i in range(ncase):
 
         aData_out_y = elm_retrieve_variable_2d(  oCase_y,\
                 iFlag_monthly_in =0,\
-                    iFlag_annual_mean_in=1,\
-                iFlag_annual_total_in= 0     )
+                    iFlag_annual_mean_in=0,\
+                iFlag_annual_total_in= 1     )
 
         dummy_x = aData_out_x.pop()
-        dummy_y = aData_out_x.pop()
+        dummy_y = aData_out_y.pop()
 
         nan_index = np.where(dummy_x ==  -9999)
 
@@ -130,6 +129,7 @@ for i in range(0,ncase):
     iCase_index =  aCase_index[i]
     if iCase_index == 52:
         continue
+    
     for iVariable in np.arange(0, nvariable):
         sVariable = aVariable[iVariable]
         sUnit = aUnit[iVariable]
@@ -172,10 +172,10 @@ for i in range(0,ncase):
         aLegend.append(sText)
         elm_map_variable_difference_dc_2d(oE3SM, oCase_x , oCase_y, dData_min_in=dData_min, dData_max_in=dData_max,\
             iFlag_scientific_notation_colorbar_in = iFlag_scientific_notation_colorbar, \
-                   iFlag_monthly_in =0,\
-                    iFlag_annual_mean_in=1,\
-                iFlag_annual_total_in= 0,\
-                     aInterval_in = aInterval,\
+                iFlag_monthly_in =0,\
+                    iFlag_annual_mean_in=0,\
+                iFlag_annual_total_in= 1,\
+                    aInterval_in = aInterval,\
                 sExtend_in = sExtend,\
             sUnit_in = sUnit,\
             sTitle_in=  sTitle,

@@ -16,8 +16,8 @@
 | 7 | HLG-based |30 year (1980-2009) |Gage height time invariant 10.0 m | A custmoized ELM-MOSART simulation, use Case 0 as initial  | The role of gage height in hillslope-based model |
 | 8 | HLG-based |30 year (1980-2009) |WT slope as surface slope + Gage height time invariant 10.0 m | A custmoized ELM-MOSART simulation, use Case 0 as initial  | The role of gage height in hillslope-based model |
 
-
-
+Case 59 is used for testing
+Case 60 is used to produce the MOSART water level.
 
 ## Analysis
 
