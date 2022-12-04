@@ -1,6 +1,10 @@
+
 import numpy as np
 
-from pyearth.system.define_global_variables import * 
+
+
+from pyearth.system.define_global_variables import *
+ 
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 from pye3sm.elm.general.structured.twod.map.elm_map_variable_difference_2d import elm_map_variable_difference_2d
@@ -11,7 +15,7 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 sDate = '20220701'
 
 
-iIndex_start=52
+iIndex_start=51
 iIndex_end=58
 #start loop
 iCase_index_start = iIndex_start
@@ -45,7 +49,10 @@ aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 ncase= len(aCase_index)
 nvariable = len(aVariable)
 for i in range(ncase):
+
     iCase_index =  aCase_index[i]
+    if iCase_index == 52:
+        continue
     
     for iVariable in np.arange(0, nvariable):
         sVariable = aVariable[iVariable]
@@ -98,5 +105,7 @@ for i in range(ncase):
                 sColormap_in= sColormap,\
             aLegend_in = aLegend )
         pass
+
+
 
 print('finished')

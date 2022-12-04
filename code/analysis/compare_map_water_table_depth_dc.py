@@ -1,13 +1,4 @@
-
-
-import os, sys
-from re import I
-import argparse
-import subprocess
 import numpy as np
-import multiprocessing
-
-
 from pyearth.system.define_global_variables import *
 from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 from pye3sm.shared.e3sm import pye3sm
