@@ -26,7 +26,7 @@ sWorkspace_figure = realpath( sPath_parent +  '/figures/' )
 
 sDate = '20220701'
 iIndex_start=51
-iIndex_end=58
+iIndex_end=59
 #start loop
 iCase_index_start = iIndex_start
 iCase_index_end = iIndex_end

@@ -8,8 +8,7 @@ from os.path import realpath
 from pyearth.system.define_global_variables import * 
 from pyearth.toolbox.data.cgpercentiles import cgpercentiles
 from pyearth.visual.color.create_qualitative_rgb_color_hex import create_qualitative_rgb_color_hex
-from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_data
-from pyearth.visual.timeseries.plot_time_series_data_w_variation import plot_time_series_data_w_variation
+from pyearth.visual.histogram.histogram_plot import histogram_plot
 
 #pye3sm package
 from pye3sm.shared.e3sm import pye3sm
@@ -27,33 +26,32 @@ sWorkspace_figure = realpath( sPath_parent +  '/figures/' )
 
 sDate = '20220701'
 iIndex_start=51
-iIndex_end=58
+iIndex_end=59
 #start loop
 iCase_index_start = iIndex_start
 iCase_index_end = iIndex_end
 
 iFlag_scientific_notation_colorbar_in = 0
 
-aVariable = ['QDRAI']
-aFlag_scientific_notation_colorbar=[1]
+aVariable = ['ZWT']
+aFlag_scientific_notation_colorbar=[0]
 iYear_start = 2000
 iYear_end = 2009
 sModel = 'e3sm'
 sRegion='amazon'
-iFlag_monthly = 1
-iFlag_log = 1 
+iFlag_monthly = 0
+iFlag_annual_mean=1
+iFlag_annual_total =0
+iFlag_log = 0
 
 iFlag_median = 1
 
-aTitle= [ r'Subsurface runoff' ]
-aUnit = [ r'Units: mm/s']
-aData_min = [-1E-5]
-aData_max = [1E-5]
+aTitle= [ r'Water table depth' ]
+aUnit = [ r'Unit: m']
+aData_min = [0]
+aData_max = [15]
 aConversion = [1]
 sColormap = 'Spectral'
-
-dMax_y_in = None 
-dMin_y_in = None 
 
 sExtend='both'
 
@@ -66,10 +64,7 @@ aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 ncase= len(aCase_index)
 nvariable = len(aVariable)
 
-aDate_all =      list()
-aData_all =      list()    
-aData_upper_all= list()
-aData_lower_all= list()
+aData_all = list() 
 aLegend = list()
 for i in range(ncase):
     iCase_index =  aCase_index[i]
@@ -80,9 +75,11 @@ for i in range(ncase):
         sVariable = aVariable[iVariable]
         sUnit = aUnit[iVariable]
         sTitle = aTitle[iVariable]
+
+        dMin_x_in = aData_min[iVariable]
+        dMax_x_in = aData_max[iVariable]
         sTitle = '' #no need for title as y label is used
-        dData_min = aData_min[iVariable]
-        dData_max = aData_max[iVariable]
+    
         dConversion = aConversion[iVariable]
         iFlag_scientific_notation_colorbar = aFlag_scientific_notation_colorbar[iVariable]
 
@@ -130,97 +127,95 @@ for i in range(ncase):
         nstress_subset= len(dates_subset)
         if iFlag_monthly ==1:
             aData_ret = elm_retrieve_variable_2d( oCase_in, iFlag_monthly_in = 1)        
-            aDataTs = np.full(nstress_subset, -9999, dtype=float)
-            aUpper=np.full(nstress_subset, -9999, dtype=float)
-            aLower=np.full(nstress_subset, -9999, dtype=float)
+           
             for i in np.arange(0, nstress_subset, 1):
                 aImage = aData_ret[i]     
                 dummy1 = np.reshape(aImage, (nrow, ncolumn))
-                good_index = np.where(dummy1 != -9999)
-                dummy1=dummy1[good_index]
-                
-                dRange = 25
-                aPercentiles_in = np.arange(50-dRange*0.5, 50+dRange*0.5 + 1, 25)
-                aInterval = cgpercentiles(dummy1, aPercentiles_in, missing_value_in = -9999)                         
-
-                if iFlag_median ==1:
-                    aDataTs[i] = np.median(dummy1) 
-                    aUpper[i ] =aInterval[1]
-                    aLower[i ] =aInterval[0]
-                else:
-                    dummy0 = np.std(dummy1)    
-                    aDataTs[i] = np.mean(dummy1) 
-                    aUpper[i ] =aDataTs[i] + 0.5*dummy0
-                    aLower[i ] =aDataTs[i] - 0.5*dummy0
-
+                good_index = np.where(dummy1 != -9999)  
+                aData_monthly=dummy1[good_index]
+              
             if iFlag_log  == 1:
-                aDataTs = np.log10(aDataTs)
-                aUpper = np.log10(aUpper)
-                aLower = np.log10(aLower)
-
+                aData_monthly = np.log10(aData_monthly)
                 #set inf to min
-                bad_index = np.where( np.isinf(  aDataTs) == True  )
-                aDataTs[bad_index] = dMin_y_in            
+                bad_index = np.where( np.isinf(  aData_monthly) == True  )
+                aData_monthly[bad_index] = dMin_x_in            
 
-            aDate_all.append(dates_subset)
-            aData_all.append(aDataTs) 
-            aData_upper_all.append(aUpper)
-            aData_lower_all.append(aLower)
+            aData_all.append(aData_monthly) 
+
+        if iFlag_annual_mean==1:
+            aData_ret = elm_retrieve_variable_2d( oCase_in, iFlag_annual_mean_in = 1)        
+           
+            for iYear in range(iYear_end, iYear_end + 1):
+                aImage = aData_ret[iYear-iYear_start]
+                sYear = "{:04d}".format(iYear)       
+                dummy1 = np.reshape(aImage, (nrow, ncolumn))
+                good_index = np.where(dummy1 != -9999)  
+                aData_annual_mean=dummy1[good_index]
+              
+            if iFlag_log  == 1:
+                aData_annual_mean = np.log10(aData_annual_mean)
+                #set inf to min
+            bad_index = np.where( np.isinf(  aData_annual_mean) == True  )
+            aData_annual_mean[bad_index] = dMin_x_in      
+            bad_index = np.where(   aData_annual_mean <  dMin_x_in  )
+            aData_annual_mean[bad_index] = dMin_x_in  
+            bad_index = np.where(   aData_annual_mean >  dMax_x_in  )
+            aData_annual_mean[bad_index] = dMax_x_in  
+
+            aData_all.append(aData_annual_mean) 
+
+        if iFlag_annual_total==1:
+            aData_ret = elm_retrieve_variable_2d( oCase_in, iFlag_annual_total_in = 1)        
+           
+            for iYear in range(iYear_end, iYear_end + 1):
+                aImage = aData_ret[iYear-iYear_start]
+                sYear = "{:04d}".format(iYear)       
+                dummy1 = np.reshape(aImage, (nrow, ncolumn))
+                good_index = np.where(dummy1 != -9999)  
+                aData_annual_total=dummy1[good_index]
+              
+            if iFlag_log  == 1:
+                aData_annual_total = np.log10(aData_annual_total)
+                #set inf to min
+            
+            bad_index = np.where( np.isinf(  aData_annual_total) == True  )
+            aData_annual_total[bad_index] = dMin_x_in            
+            bad_index = np.where(   aData_annual_total <  dMin_x_in  )
+            aData_annual_total[bad_index] = dMin_x_in  
+            bad_index = np.where(   aData_annual_total >  dMax_x_in  )
+            aData_annual_total[bad_index] = dMax_x_in  
+
+            aData_all.append(aData_annual_total) 
+
 
 sFilename_out = sWorkspace_figure + slash \
-                + sVariable.lower() + '_tsplots_monthly' +'.png'        
+                + sVariable.lower() + '_histogram_annual_mean' +'.png'      
 
 aColor_in = create_qualitative_rgb_color_hex(ncase)
-sFormat_y='{:.1f}' 
-sLabel_y=r'Subsurface runoff (mm/s)'
-plot_time_series_data(aDate_all,
-                          aData_all,\
+sFormat_x='{:.1f}' 
+sLabel_x=r'Water table depth (m)'
+sLabel_y='Density'
+
+histogram_plot(  aData_all,\
                           sFilename_out,\
-                          iReverse_y_in = 0, \
-                          iFlag_log_in = 1,\
+                          iFlag_log_in = 0,\
                           iFlag_scientific_notation_in=0,\
-                          iFlag_miniplot_in = 1,\
-                          ncolumn_in =int(ncase/2),\
-                          dMax_y_in = dMax_y_in,\
-                          dMin_y_in = dMin_y_in,\
-                          dSpace_y_in = 1, \
+                          ncolumn_in =1,\
+                          dMax_x_in = dMax_x_in,\
+                          dMin_x_in = dMin_x_in,\
+                          dSpace_x_in = 1, \
                           sTitle_in = sTitle, \
+                          sLabel_x_in= sLabel_x,\
                           sLabel_y_in= sLabel_y,\
-                          sFormat_y_in= sFormat_y ,\
+                          sFormat_x_in= sFormat_x ,\
                           aLabel_legend_in = aLegend, \
                           aColor_in =aColor_in,\
-                          aMarker_in = None,\
-                          sLocation_legend_in = 'upper left' ,\
-                          aLocation_legend_in = (0.0, 1.0),\
-                          aLinestyle_in = None,\
+                          sLocation_legend_in = 'upper right' ,\
+                          aLocation_legend_in = (1.0, 1.0),\
                           iSize_x_in = 12,\
                           iSize_y_in = 5)
 
-sFilename_out = sWorkspace_figure + slash \
-                + sVariable.lower() + '_tsplots_monthly_w_variation' +'.png' 
+
                 
-plot_time_series_data_w_variation(aDate_all,
-                          aData_all,\
-                          aData_upper_all,\
-                          aData_lower_all,\
-                          sFilename_out,\
-                          iReverse_y_in = 0, \
-                          iFlag_log_in = 1,\
-                            iFlag_miniplot_in = 1,\
-                          iFlag_scientific_notation_in=0,\
-                          ncolumn_in = int(ncase/2),\
-                          dMax_y_in = dMax_y_in,\
-                          dMin_y_in = dMin_y_in,\
-                          dSpace_y_in = 1, \
-                          sTitle_in = sTitle, \
-                          sLabel_y_in= sLabel_y,\
-                          sFormat_y_in= sFormat_y ,\
-                          aLabel_legend_in = aLegend, \
-                          aColor_in =aColor_in,\
-                          aMarker_in = None,\
-                          sLocation_legend_in = 'upper left' ,\
-                          aLocation_legend_in = (0.0, 1.0),\
-                          aLinestyle_in = None,\
-                          iSize_x_in = 12,\
-                          iSize_y_in = 5)
+
 print('finished')

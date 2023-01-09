@@ -1,11 +1,6 @@
 
-
-import os, sys
-from re import I
-import argparse
-import subprocess
 import numpy as np
-import multiprocessing
+
 
 
 from pyearth.system.define_global_variables import *
@@ -20,36 +15,30 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 sDate = '20220701'
 
 
-iIndex_start=51
-iIndex_end=58
+iIndex_start=59
+iIndex_end=59
 #start loop
 iCase_index_start = iIndex_start
 iCase_index_end = iIndex_end
 
+iFlag_scientific_notation_colorbar_in = 0
 
-
-aVariable = ['ZWT']
-aFlag_scientific_notation_colorbar=[0]
+aVariable = ['QDRAI']
+aFlag_scientific_notation_colorbar=[1]
 iYear_start = 2000
 iYear_end = 2009
 sModel = 'e3sm'
 sRegion='amazon'
-sColormap = 'Spectral_r'
 
-aTitle= [ 'Water table depth' ]
-aUnit = [r'Unit: m']
-aData_min = [-3]
-aData_max = [3]
+
+aTitle= [ r'Subsurface runoff' ]
+aUnit = [ r'Units: mm/s']
+aData_min = [-1E-5]
+aData_max = [1E-5]
 aConversion = [1]
+sColormap = 'Spectral'
 
 sExtend='both'
-
-#aVariable = ['sur_slp']
-#aTitle = ['Surface slope']
-#aUnit = [r'Unit: percent']
-#aData_min = [0]
-#aData_max = [50]
-#aConversion = [100]
 
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
@@ -59,11 +48,12 @@ oE3SM = pye3sm(aParameter_e3sm)
 aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 ncase= len(aCase_index)
 nvariable = len(aVariable)
-for i in range(0,ncase):
+for i in range(ncase):
 
     iCase_index =  aCase_index[i]
     if iCase_index == 52:
         continue
+    
     for iVariable in np.arange(0, nvariable):
         sVariable = aVariable[iVariable]
         sUnit = aUnit[iVariable]
@@ -106,14 +96,16 @@ for i in range(0,ncase):
         aLegend.append(sText)
         elm_map_variable_difference_2d(oE3SM, oCase_x , oCase_y, dData_min_in=dData_min, dData_max_in=dData_max,\
             iFlag_scientific_notation_colorbar_in = iFlag_scientific_notation_colorbar, \
-                   iFlag_monthly_in =0,\
-                    iFlag_annual_mean_in=1,\
-                iFlag_annual_total_in= 0,\
+                iFlag_monthly_in =0,\
+                    iFlag_annual_mean_in=0,\
+                iFlag_annual_total_in= 1,\
                 sExtend_in = sExtend,\
             sUnit_in = sUnit,\
-                sColormap_in=sColormap,\
             sTitle_in=  sTitle,\
+                sColormap_in= sColormap,\
             aLegend_in = aLegend )
         pass
+
+
 
 print('finished')
