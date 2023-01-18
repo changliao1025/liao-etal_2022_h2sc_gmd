@@ -3,7 +3,7 @@ from osgeo import gdal, osr #the default operator
 from pyearth.system.define_global_variables import *   
 from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file
-from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
+from pye3sm.elm.mesh.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
 from pyearth.visual.map.raster.map_raster_data import map_raster_data
 def map_observation_wtd():
 
@@ -25,7 +25,7 @@ def map_observation_wtd():
     sUnit_in = 'Unit: m'
     sColormap= 'Spectral_r'
     iFlag_scientific_notation_colorbar_in= 0 
-    dData_max_in =20
+    dData_max_in =25
     dData_min_in = 0
     aLegend = list()
     aLegend.append('Observed water table depth')
@@ -56,7 +56,7 @@ def map_observation_wtd():
     sTitle_in = 'Water table depth'
     sUnit_in = 'Unit: m'
     iFlag_scientific_notation_colorbar_in= 0 
-    dData_max_in = 20
+    dData_max_in = 25
     dData_min_in = 0
     
     map_raster_data(aData_out2,  aImage_extent,\

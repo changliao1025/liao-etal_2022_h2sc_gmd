@@ -46,7 +46,7 @@ sRegion='amazon'
 
 aTitle= [ 'Water table depth differences' ]
 aUnit = [r'Unit: m']
-dData_min = -30
+dData_min = -25
 dData_max = 5
 aConversion = [1]
 
@@ -58,6 +58,9 @@ aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configurati
 print(aParameter_e3sm)
 oE3SM = pye3sm(aParameter_e3sm)
 aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
+
+aCase_index = np.array([59, 61])
+
 nvariable = len(aVariable)
 ncase= len(aCase_index)
 aData_all = list()
@@ -146,7 +149,10 @@ for iCase_index in ( aCase_index ):
 
 
         aLegend = list()
-        sCase = "{:0d}".format(iCase_index - 50)
+        if iCase_index ==59:
+            sCase = "{:0d}".format(iCase_index - 50)
+        else:
+            sCase = "{:0d}".format(iCase_index - 60)
         sText = 'Case ' + sCase + ' - ' + 'Observation' 
         aLegend.append(sText)
         elm_map_variable_difference_w_observation_dc_2d(oE3SM, oCase_x , aData_obs, dData_min_in=dData_min, dData_max_in=dData_max,\
