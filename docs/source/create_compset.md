@@ -204,3 +204,11 @@ A bash file will be used to test the configuration files.
 
 In a single cell case, there is no need to use a different DATM forcing data, therefore, there is no need to use the domain file for DATM.
 However, we still need to use a domain file for the DROF.
+
+In the case creation step, we will use the following setup
+
+iFlag_atm = 0
+iFlag_datm = 1
+
+iFlag_mosart = 0
+iFlag_drof = 1
