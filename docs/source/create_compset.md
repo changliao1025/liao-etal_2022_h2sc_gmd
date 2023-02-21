@@ -204,3 +204,19 @@ A bash file will be used to test the configuration files.
 
 In a single cell case, there is no need to use a different DATM forcing data, therefore, there is no need to use the domain file for DATM.
 However, we still need to use a domain file for the DROF.
+
+Setting for compset:
+        iFlag_atm = 0
+        iFlag_datm = 1
+        iFlag_lnd = 1
+        iFlag_dlnd = 0
+        iFlag_rof = 0
+        iFlag_drof = 1
+
+Corresponding, the domain file and namelist should be:
+        sFilename_atm_domain = same as lnd
+        sFilename_datm_namelist = 
+        sFilename_lnd_domain = 
+        sFilename_lnd_namelist = 
+        sFilename_drof_namelist_in = 
+        sFilename_drof_domain = ?
