@@ -71,3 +71,4 @@ cd $sCasePath
 ./xmlchange ROF_DOMAIN_PATH=/compyfs/liao313/04model/e3sm/amazon/cases_aux/e3sm${sCasename}
 ./xmlchange ELM_USRDAT_NAME=site
 ./case.setup
+
