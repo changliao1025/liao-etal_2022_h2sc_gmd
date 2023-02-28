@@ -209,6 +209,7 @@ We use a domain file for both DATM and DROF.
 
 
 Setting for compset:
+
         iFlag_atm = 0
         iFlag_datm = 1
         iFlag_lnd = 1
@@ -217,9 +218,13 @@ Setting for compset:
         iFlag_drof = 1
 
 Corresponding, the domain file and namelist should be:
+
         sFilename_atm_domain = same as lnd
-        sFilename_datm_namelist = 
-        sFilename_lnd_domain = 
-        sFilename_lnd_namelist = 
-        sFilename_drof_namelist_in = 
-        sFilename_drof_domain = ?
+        sFilename_datm_namelist = needed
+        sFilename_lnd_domain = need 
+        sFilename_lnd_namelist = needed
+        sFilename_lnd_surfdata = needed
+        sFilename_drof_namelist_in = similar to datm
+        sFilename_drof_domain = is this needed
+
+
