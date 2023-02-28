@@ -202,6 +202,8 @@ Since our new drof compset will also have stream data file, we will add correspo
   
 A bash file will be used to test the configuration files.
 
+In a single cell case, there is no need to use a different DATM forcing data.
+We use a domain file for both DATM and DROF.
 In a single cell case, there is no need to use a different DATM forcing data, therefore, there is no need to use the domain file for DATM.
 However, we still need to use a domain file for the DROF.
 
