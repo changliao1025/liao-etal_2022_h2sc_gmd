@@ -36,7 +36,7 @@ dResolution = 0.5 #this is predefined by the mosart grid and elm grid
 aMask=np.full((1,1), 1, dtype=np.int32)
 
 #case index and date
-iCase = 4
+iCase = 5
 
 sDate = '20230101'
 sDate_spinup = '20210209'
@@ -48,7 +48,7 @@ iFlag_atm = 0
 iFlag_datm = 1
 iFlag_create_atm_grid = 0
 
-iFlag_replace_datm_forcing=0
+iFlag_replace_datm_forcing=1
 iFlag_replace_dlnd_forcing=0
 iFlag_replace_drof_forcing=1
 
@@ -123,6 +123,12 @@ sFilename_mosart_parameter_extracted = '/qfs/people/liao313/workspace/python/lia
 mosart_extract_cell_by_coordinates(sFilename_mosart_parameter_default, dLongitude, dLatitude, sFilename_mosart_out=sFilename_mosart_parameter_extracted)
 
 
+sFilename_user_datm_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip_parflow'
+sFilename_user_datm_solar = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Solar_parflow'
+sFilename_user_datm_temp = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.TPQW_parflow'
+sFilename_user_dlnd_runoff = '/qfs/people/liao313/data/e3sm/sag/mosart/dlnd.streams.txt.lnd.gpcc'
+sFilename_user_drof_gage_height= '/compyfs/liao313/04model/e3sm/amazon/user_drof.streams.txt.MOSART.gage_height'
+
 sFilename_atm_domain=None
 sFilename_lnd_domain=None
 sFilename_datm_namelist=None
@@ -131,8 +137,8 @@ sFilename_rof_namelist=None
 sFilename_rof_parameter =None
 
 
-sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/code/site/e3sm.xml'
-sFilename_case_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/code/site/case.xml'
+sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/code/k34/e3sm.xml'
+sFilename_case_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/code/k34/case.xml'
 if iFlag_default ==1:
     sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
 else:
@@ -472,7 +478,7 @@ if iFlag_create_case ==1:
             for i in range(nElev):
                 aDimension_all.append( aDimension)
                 pass
-            
+
             add_multiple_variable_to_netcdf(sFilename_old, sFilename_new, aElevation_profile, aVariable_all, aUnit_all,  aDimension_all)
 
 
@@ -512,7 +518,7 @@ if iFlag_create_case ==1:
                                                               iYear_start_in = 1890,
                                                               iYear_end_in = 1919,
                                                               iYear_data_end_in = 2009,
-                                                              iYear_data_start_in = 1980   ,
+                                                              iYear_data_start_in = 1980 ,
                                                               iCase_index_in = iCase,
                                                               sDate_in = sDate,
                                                               sModel_in = sModel,
@@ -525,18 +531,21 @@ if iFlag_create_case ==1:
                                                               sFilename_rof_parameter_in = sFilename_rof_parameter,
                                                               sFilename_rof_domain_in = sFilename_rof_domain,
                                                               sFilename_drof_namelist_in = sFilename_drof_namelist,
-                                                              sWorkspace_scratch_in =   sWorkspace_scratch)
+                                                              sWorkspace_scratch_in = sWorkspace_scratch)
         pass
     else:
         iYear_start = 1980
         iYear_end = 2009
 
         aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,
-                                                              iFlag_debug_case_in =0,
+                                                              iFlag_replace_datm_forcing_in = iFlag_replace_datm_forcing,
+                                                              iFlag_replace_dlnd_forcing_in = iFlag_replace_dlnd_forcing,
+                                                              iFlag_replace_drof_forcing_in = iFlag_replace_drof_forcing,
+                                                              iFlag_debug_case_in = 0,
                                                               iFlag_atm_in = iFlag_atm, iFlag_datm_in = iFlag_datm,
-                                                              iFlag_lnd_in= iFlag_lnd,iFlag_dlnd_in= iFlag_dlnd,
+                                                              iFlag_lnd_in= iFlag_lnd, iFlag_dlnd_in= iFlag_dlnd,
                                                               iFlag_lnd_spinup_in = iFlag_lnd_spinup,
-                                                              iFlag_rof_in= iFlag_rof,iFlag_drof_in= iFlag_drof,
+                                                              iFlag_rof_in= iFlag_rof, iFlag_drof_in= iFlag_drof,
                                                               iYear_start_in = iYear_start,
                                                               iYear_end_in = iYear_end,
                                                               iYear_data_end_in = 2009,
@@ -547,19 +556,22 @@ if iFlag_create_case ==1:
                                                               sRegion_in = sRegion,
                                                               sFilename_atm_domain_in = sFilename_atm_domain,
                                                               sFilename_datm_namelist_in = sFilename_datm_namelist ,
+                                                              sFilename_user_datm_prec_in= sFilename_user_datm_prec,
+                                                              sFilename_user_datm_temp_in= sFilename_user_datm_temp,
+                                                              sFilename_user_datm_solar_in= sFilename_user_datm_solar,
                                                               sFilename_lnd_namelist_in = sFilename_lnd_namelist,
                                                               sFilename_lnd_domain_in = sFilename_lnd_domain,
+                                                              sFilename_user_dlnd_runoff_in= sFilename_user_dlnd_runoff,
                                                               sFilename_rof_namelist_in = sFilename_rof_namelist,
                                                               sFilename_rof_parameter_in = sFilename_rof_parameter,
                                                               sFilename_rof_domain_in = sFilename_rof_domain,
                                                               sFilename_drof_namelist_in = sFilename_drof_namelist,
+                                                              sFilename_user_drof_gage_height_in= sFilename_user_drof_gage_height,
                                                               sWorkspace_scratch_in =   sWorkspace_scratch )
         pass
+    
     #print(aParameter_case)
 
     oCase = pycase(aParameter_case)
 
-    e3sm_create_case(oE3SM, oCase,     
-                     iFlag_replace_datm_forcing=iFlag_replace_datm_forcing,    
-                     iFlag_replace_dlnd_forcing= iFlag_replace_dlnd_forcing,
-                     iFlag_replace_drof_forcing = iFlag_replace_drof_forcing)
+    e3sm_create_case(oE3SM, oCase )
