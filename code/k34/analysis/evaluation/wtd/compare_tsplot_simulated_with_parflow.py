@@ -64,27 +64,16 @@ for sKey, aValue in aDatasets.variables.items():
         aLatitude = (aValue[:]).data
         continue
 
-#print(ncfil)
-nrow=aLatitude.shape[0]
-ncolumn=aLongitude.shape[0]
 
-dResolution_y = (np.max(aLatitude) - np.min(aLatitude)) / (nrow-1)
+nrow=1
+ncolumn=1
 
-dResolution_x = (np.max(aLongitude) - np.min(aLongitude)) / (ncolumn-1)
-
-print(dResolution_x, dResolution_y)
-dLon_min = np.min(aLongitude)
-dLon_max = np.max(aLongitude)
-dLat_min = np.min(aLatitude)
-dLat_max = np.max(aLatitude)
 expnm = 'par_35'
 ymdat = '1905'
 sFilename = '/qfs/people/lili400/datashare/pf_simulation/par_35_wtd.npy'
 
 wtd_mod = np.load(sFilename) # (nt, ny, nx)
 print(wtd_mod.shape)  ### this is what you need ###
-
-row_index, column_index = find_index_by_latlon(dLon1, dLat, dLon_min,dLat_max,dResolution_x, dResolution_y, iFlag_center_in= 1)
 
 
 mod_day=np.full(nts_subset, -9999, dtype=float)
@@ -99,16 +88,13 @@ for i in range(nts_subset):
 iFlag_monthly=1
 iFlag_log=0
 sDate = '20230101'
-iIndex_start = 4
-iIndex_end = 4
+
 
 #start loop
-iCase_index_start = iIndex_start
-iCase_index_end = iIndex_end
+iCase_index=4
 
-aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 
-ncase = len(aCase_index)
+
 
 iYear_start = 2000
 iYear_end = 2009
@@ -124,10 +110,11 @@ print(aParameter_e3sm)
 oE3SM = pye3sm(aParameter_e3sm)
 
 
-iCase_index = 59
+
 sVariable='zwt'
+
 aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
-                                                           iCase_index_in =  61 ,\
+                                                           iCase_index_in =  iCase_index ,\
                                                            iYear_start_in = iYear_start, \
                                                            iYear_end_in = iYear_end,\
                                                             iYear_subset_start_in = iYear_start_subset, \
@@ -138,8 +125,9 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                            sVariable_in = sVariable )
 
 oCase_x = pycase(aParameter_case)
-aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
-                                                           iCase_index_in =  59 ,\
+
+aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,
+                                                           iCase_index_in =  59 ,
                                                            iYear_start_in = iYear_start, \
                                                            iYear_end_in = iYear_end,\
                                                             iYear_subset_start_in = iYear_start_subset, \
