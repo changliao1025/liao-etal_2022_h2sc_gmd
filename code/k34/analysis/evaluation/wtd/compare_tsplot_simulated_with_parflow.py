@@ -5,7 +5,6 @@ from datetime import datetime
 from netCDF4 import Dataset 
 from pathlib import Path
 from pyearth.system.define_global_variables import *
-from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 from pyearth.toolbox.reader.text_reader_string import text_reader_string
 from pyearth.gis.location.convert_lat_lon_range import convert_360_to_180
 from pyearth.gis.location.find_index_by_latlon import find_index_by_latlon
@@ -15,7 +14,7 @@ from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 from pye3sm.elm.mesh.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
-from pye3sm.elm.general.structured.twod.retrieve.elm_retrieve_variable_2d import elm_retrieve_variable_2d
+from pye3sm.elm.general.structured.retrieve.elm_retrieve_variable_2d import elm_retrieve_variable_2d
 
 sPath_parent = str(Path(__file__).parents[4]) # data is located two dir's up
 print(sPath_parent)
@@ -47,6 +46,7 @@ for i in range(nts):
         dSimulation =datetime(2004, iMonth, iDay)
         aDate_parflow.append(dSimulation)
     pass
+
 nts_subset = len(aDate_index)
 aDate_index=np.array(aDate_index)
 aDate_parflow=np.array(aDate_parflow)
@@ -64,27 +64,16 @@ for sKey, aValue in aDatasets.variables.items():
         aLatitude = (aValue[:]).data
         continue
 
-#print(ncfil)
-nrow=aLatitude.shape[0]
-ncolumn=aLongitude.shape[0]
 
-dResolution_y = (np.max(aLatitude) - np.min(aLatitude)) / (nrow-1)
+nrow=1
+ncolumn=1
 
-dResolution_x = (np.max(aLongitude) - np.min(aLongitude)) / (ncolumn-1)
-
-print(dResolution_x, dResolution_y)
-dLon_min = np.min(aLongitude)
-dLon_max = np.max(aLongitude)
-dLat_min = np.min(aLatitude)
-dLat_max = np.max(aLatitude)
 expnm = 'par_35'
 ymdat = '1905'
 sFilename = '/qfs/people/lili400/datashare/pf_simulation/par_35_wtd.npy'
 
 wtd_mod = np.load(sFilename) # (nt, ny, nx)
 print(wtd_mod.shape)  ### this is what you need ###
-
-row_index, column_index = find_index_by_latlon(dLon1, dLat, dLon_min,dLat_max,dResolution_x, dResolution_y, iFlag_center_in= 1)
 
 
 mod_day=np.full(nts_subset, -9999, dtype=float)
@@ -98,36 +87,34 @@ for i in range(nts_subset):
 #using a case extract
 iFlag_monthly=1
 iFlag_log=0
-sDate = '20220701'
-iIndex_start = 51
-iIndex_end = 58
+sDate = '20230101'
+
 
 #start loop
-iCase_index_start = iIndex_start
-iCase_index_end = iIndex_end
+iCase_index=4
 
-aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 
-ncase = len(aCase_index)
+
 
 iYear_start = 2000
 iYear_end = 2009
 iYear_start_subset=2004
 iYear_end_subset=2004
 sModel = 'e3sm'
-sRegion='amazon'
+sRegion='k34'
 
-sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
-sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
+sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/code/k34/e3sm.xml'
+sFilename_case_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/code/k34/case.xml'
 aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
 print(aParameter_e3sm)
 oE3SM = pye3sm(aParameter_e3sm)
 
 
-iCase_index = 59
+
 sVariable='zwt'
+
 aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
-                                                           iCase_index_in =  61 ,\
+                                                           iCase_index_in =  iCase_index ,\
                                                            iYear_start_in = iYear_start, \
                                                            iYear_end_in = iYear_end,\
                                                             iYear_subset_start_in = iYear_start_subset, \
@@ -138,8 +125,9 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                            sVariable_in = sVariable )
 
 oCase_x = pycase(aParameter_case)
-aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
-                                                           iCase_index_in =  59 ,\
+
+aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,
+                                                           iCase_index_in =  59 ,
                                                            iYear_start_in = iYear_start, \
                                                            iYear_end_in = iYear_end,\
                                                             iYear_subset_start_in = iYear_start_subset, \
