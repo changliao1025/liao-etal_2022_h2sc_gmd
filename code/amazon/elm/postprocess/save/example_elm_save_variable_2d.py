@@ -4,7 +4,7 @@ from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-from pye3sm.elm.general.structured.twod.save.elm_save_variable_2d import elm_save_variable_2d
+from pye3sm.elm.general.structured.save.elm_save_variable import elm_save_variable
 sModel = 'e3sm'
 sRegion ='amazon'
 sDate = '20220314'
@@ -46,5 +46,5 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                        sVariable_in = sVariable )
 #print(aParameter_case)
 oCase = pycase(aParameter_case)
-elm_save_variable_2d(oE3SM, oCase )
+elm_save_variable(oE3SM, oCase )
 print('finished')

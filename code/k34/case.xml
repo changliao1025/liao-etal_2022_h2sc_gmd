@@ -46,13 +46,25 @@
          The case end year
       </desc>
     </entry>
-    <entry id="iYear_data_start" value="1980">
+    <entry id="iYear_data_datm_start" value="1980">
       <type>int</type>
       <desc>
          The forcing data start year
       </desc>
     </entry>
-    <entry id="iYear_data_end" value="2008">
+    <entry id="iYear_data_datm_end" value="2008">
+      <type>int</type>
+      <desc>
+        The forcing data start year
+      </desc>
+    </entry>
+     <entry id="iYear_data_dlnd_start" value="1980">
+      <type>int</type>
+      <desc>
+         The forcing data start year
+      </desc>
+    </entry>
+    <entry id="iYear_data_dlnd_end" value="2008">
       <type>int</type>
       <desc>
         The forcing data start year

@@ -1,10 +1,14 @@
 import numpy as np
 
-dSlope_surface_in = 5.699999999999999E-003
-dSaturate_hydraulic_conductivity_in= 0.01
-dLength_hillslope = 3000  * 1000 
+dSlope_surface_in = 40.0/850.0 #5.699999999999999E-003
+dSlope_surface_in = 0.014
+dSaturate_hydraulic_conductivity_in= 0.107872755330942
 
-dWidth_hillslope_in= 50000 * 1000
+dArea = 3087.741 * 1000000
+dLength_hillslope = np.sqrt(dArea) / 2.0* 1000 
+#dLength_hillslope = 27000  * 1000 
+
+dWidth_hillslope_in= dLength_hillslope * 2
 dLength_seepage = 10 * 1000
 
 dArea_hillslope_in = dWidth_hillslope_in*dLength_hillslope
@@ -23,10 +27,10 @@ dDummy4 =  dSaturate_hydraulic_conductivity_in * dDummy2 * dDummy3
 
 
 dDummy5 = dArea_hillslope_in
-dFlow_downslope_out = dDummy4 /  dDummy5 #mm/s 
+
 
 dFlow_seepage_out = dSaturate_hydraulic_conductivity_in \
-         * dLength_seepage * np.power(dSlope_surface_in,1) * dWidth_hillslope_in / dArea_hillslope_in
+         * dLength_seepage * np.power(dSlope_surface_in,2) * dWidth_hillslope_in / dArea_hillslope_in
 
-print(dFlow_downslope_out)
+
 print(dFlow_seepage_out)

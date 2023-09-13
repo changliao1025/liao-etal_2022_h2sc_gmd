@@ -17,7 +17,7 @@ from pyearth.toolbox.data.convert_time_series_daily_to_monthly import convert_ti
 
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
-from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
+from pye3sm.elm.mesh.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
 def preprcess_mingpan_runoff():
     """
     Preprocess the runoff data
@@ -120,7 +120,7 @@ def preprcess_mingpan_runoff2():
                 else:
                     data_monthly = convert_time_series_daily_to_monthly(aData_daily_in, \
                                 iYear, 1, 1, \
-                                iYear, 12, iDay_end , sType_in = 'sum'  )
+                                iYear, 12, iDay_end , sType_in = 'mean'  )
                 
                     aData_year[:,i,j] = data_monthly
         

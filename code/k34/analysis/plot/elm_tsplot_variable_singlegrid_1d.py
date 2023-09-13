@@ -11,7 +11,7 @@ from pyearth.system.define_global_variables import *
  
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
-from pye3sm.elm.general.singlegrid.plot.elm_tsplot_variable_singlegrid_1d import elm_tsplot_variable_singlegrid_1d
+from pye3sm.elm.general.singlecell.plot.elm_tsplot_variable_singlegrid_1d import elm_tsplot_variable_singlegrid_1d
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 

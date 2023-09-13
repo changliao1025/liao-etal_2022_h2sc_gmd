@@ -54,8 +54,18 @@
         The scratch workspace
       </desc>
     </entry>
-
-  
+    <entry id="nTask" value="1">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="nSubmit" value="0">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
     <entry id="RES" value="r05_r05"> 
       <type>char</type>
       <desc>

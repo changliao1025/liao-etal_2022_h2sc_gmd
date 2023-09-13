@@ -24,8 +24,8 @@ sVariable = 'discharge'
 sVariable = 'Main_Channel_Water_Depth_LIQ' #the river gage height
 sUnit = r'Units: m3/s'
 
-sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/code/configuration/e3sm.xml'
-sFilename_case_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/code/configuration/case.xml'
+sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/code/k34/e3sm.xml'
+sFilename_case_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/code/k34/case.xml'
 aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
 print(aParameter_e3sm)
 oE3SM = pye3sm(aParameter_e3sm)
@@ -44,6 +44,8 @@ oCase = pycase(aParameter_case)
 sFilename_domain = '/compyfs/liao313/00raw/drof/mosart_domain_amazon_2d_halfdegree.nc'
 mosart_create_domain_for_stream_file_2d(oCase, sFilename_domain)
 
-mosart_create_stream_file_2d(oCase )
+
+sWorkspace_stream_in = '/compyfs/liao313/00raw/drof'
+mosart_create_stream_file_2d(oCase, sWorkspace_stream_in )
 
 print('finished')
