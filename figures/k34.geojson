@@ -1,0 +1,7 @@
+{
+"type": "FeatureCollection",
+"name": "k34",
+"features": [
+{ "type": "Feature", "properties": { "id": 1, "longitude": -60.2093, "latitude": -2.6091 }, "geometry": { "type": "Point", "coordinates": [ -60.2093, -2.6091, 0.0 ] } }
+]
+}
