@@ -27,38 +27,29 @@ Lateral groundwater flow plays an important role in controlling water table dyna
 ## Journal reference
 Liao. et al. (2022). Representing lateral groundwater flow in Earth system models.
 
-## Code reference
-
-References for each minted software release for all code involved.
-
-
-
-## Data reference
-
-### Input data
-Reference for each minted data source for your input data.  For example:
-
-
-
-### Output data
-Reference for each minted data source for your output data.  For example:
-
-
 ## Contributing modeling software
 
 | Model | Version | Repository Link | DOI |
 |-------|---------|-----------------|-----|
-| PyEarth | version | https://github.com/changliao1025/pyearth | doi.org/10.5281/zenodo.6368652 |
-
+| HexWatershed | 3.0 | https://github.com/changliao1025/pyhexwatershed | doi.org/10.5281/zenodo.6425881 |
+| PyEarth | 0.1.25 | https://github.com/changliao1025/pyearth | doi.org/10.5281/zenodo.6368652 |
+| PyE3SM | 0.1.0 | https://github.com/changliao1025/pye3sm | doi.org/10.5281/zenodo.7591982 |
+| E3SM | 0.1.0 | https://github.com/changliao1025/E3SM/tree/changliao/elm/hillslope |  |
 
 ## Reproduce my experiment
 
 You need to follow three major steps to reproduce this study:
 
-
+1. Install the pyhexwatershed software
+2. Download the DEM for the study area
+3. Run the HexWatershed model to generate the hillslope data
+4. Install the E3SM model with the hillslope capability
+5. Install the PyE3SM software
+6. Run the PyE3SM to setup the E3SM model with the hillslope capability
+7. Run the E3SM model
 
 ## Reproduce my figures
 
-Use the scripts found in the `figures` directory to reproduce the figures used in this publication.
+Use the scripts found in the `codes/k34/analysis/plot/` directory to reproduce the figures used in this publication.
 
 
