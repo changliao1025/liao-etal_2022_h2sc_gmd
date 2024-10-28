@@ -49,7 +49,7 @@ To reproduce the E3SM simulations, you need to follow the steps below:
 3. Install the PyEarth software (https://pypi.org/project/pyearth/)
 4. Download the default E3SM ELM input data, including the forcing data such as precipation and temperature, and the surface/domain data. Data can be obtained from the E3SM website (https://e3sm.org/).
 5. Download the default E3SM MOSART input data, including the river network data. Run the MOSART model to generate the river flow data. This data will be used as the boundary condition for the E3SM ELM model. An example data stream file is provided in the `data/` directory.
-6. Run the PyE3SM to setup the E3SM ELM model with the hillslope capability, an example of the case setup is provided as `codes/k34/cases/h2sc/create_customized_h2sc_elm_case_2.py`. The hillslope data generated from the HexWatershed model is used to define the subgrid hillslope in the E3SM ELM model.
+6. Run the PyE3SM to setup the E3SM ELM model with the hillslope capability, an example of the case setup is provided as `codes/k34/cases/hexwatershed/create_customized_h2sc_elm_case_2.py`. The hillslope data generated from the HexWatershed model is used to define the subgrid hillslope in the E3SM ELM model.
 7. Run the E3SM ELM model. A default ELM spin up simulation is also recommended before running the hillslope simulation. See the above case setup file for more details.
 
 ## Reproduce my figures
