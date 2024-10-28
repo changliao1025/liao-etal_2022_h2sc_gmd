@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14003483.svg)](https://doi.org/10.5281/zenodo.14003483)
+
 
 # Liao. et al. 2024 Geoscientific Model Development
 
