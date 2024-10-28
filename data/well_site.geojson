@@ -1,0 +1,20 @@
+{
+"type": "FeatureCollection",
+"name": "well_site",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "well": "PR-11", "lat": -2.601111111, "lon": -60.2075 }, "geometry": { "type": "Point", "coordinates": [ -60.2075, -2.601111111 ] } },
+{ "type": "Feature", "properties": { "well": "PR-10", "lat": -2.601944444, "lon": -60.20722222 }, "geometry": { "type": "Point", "coordinates": [ -60.20722222, -2.601944444 ] } },
+{ "type": "Feature", "properties": { "well": "PR-08", "lat": -2.601666667, "lon": -60.2075 }, "geometry": { "type": "Point", "coordinates": [ -60.2075, -2.601666667 ] } },
+{ "type": "Feature", "properties": { "well": "PR-09", "lat": -2.602222222, "lon": -60.2075 }, "geometry": { "type": "Point", "coordinates": [ -60.2075, -2.602222222 ] } },
+{ "type": "Feature", "properties": { "well": "PR-07", "lat": -2.6025, "lon": -60.20777778 }, "geometry": { "type": "Point", "coordinates": [ -60.20777778, -2.6025 ] } },
+{ "type": "Feature", "properties": { "well": "PR-06", "lat": -2.603611111, "lon": -60.2075 }, "geometry": { "type": "Point", "coordinates": [ -60.2075, -2.603611111 ] } },
+{ "type": "Feature", "properties": { "well": "PT-07", "lat": -2.603888889, "lon": -60.20777778 }, "geometry": { "type": "Point", "coordinates": [ -60.20777778, -2.603888889 ] } },
+{ "type": "Feature", "properties": { "well": "PT-06", "lat": -2.604166667, "lon": -60.20777778 }, "geometry": { "type": "Point", "coordinates": [ -60.20777778, -2.604166667 ] } },
+{ "type": "Feature", "properties": { "well": "PT-09", "lat": -2.605277778, "lon": -60.20777778 }, "geometry": { "type": "Point", "coordinates": [ -60.20777778, -2.605277778 ] } },
+{ "type": "Feature", "properties": { "well": "PR-05", "lat": -2.604722222, "lon": -60.20777778 }, "geometry": { "type": "Point", "coordinates": [ -60.20777778, -2.604722222 ] } },
+{ "type": "Feature", "properties": { "well": "PP-01", "lat": -2.608611111, "lon": -60.20916667 }, "geometry": { "type": "Point", "coordinates": [ -60.20916667, -2.608611111 ] } },
+{ "type": "Feature", "properties": { "well": "PP-02", "lat": -2.606388889, "lon": -60.20833333 }, "geometry": { "type": "Point", "coordinates": [ -60.20833333, -2.606388889 ] } },
+{ "type": "Feature", "properties": { "well": "PP-03", "lat": -2.605555556, "lon": -60.2075 }, "geometry": { "type": "Point", "coordinates": [ -60.2075, -2.605555556 ] } }
+]
+}
