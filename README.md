@@ -37,18 +37,21 @@ Liao. et al. (2024). Representing lateral groundwater flow between land and rive
 
 ## Reproduce my experiment
 
-You need to follow three major steps to reproduce this study:
+To reproduce the hillslope definition simulations, you need to follow the steps below:
+1. Install the pyhexwatershed software. Please refer to HexWatershed documentation (https://hexwatershed.readthedocs.io/en/latest/) for more details.
+2. Download the DEM for the study area. This is done using the Latitude = -2.6091 and Longitude = -60.2093 to define a 0.5 degree by 0.5 degree box. Then users can use the box to download the high resolution DEM from other resources such as the SRTM data. In this study, we use the Python package `elevation` (https://pypi.org/project/elevation/) to download the DEM data. An example box geojson file is provided in the `data/` directory.
+3. Set up and run the HexWatershed model to generate the hillslope data. In thi case, the HexWatershed model is run in the elevation-only mode. See documentation for more details (https://hexwatershed.readthedocs.io/en/latest/). An example HexWatershed configuration file is provided in the `data/` directory.
 
-1. Install the pyhexwatershed software
-2. Download the DEM for the study area
-3. Run the HexWatershed model to generate the hillslope data
-4. Install the E3SM model with the hillslope capability
-5. Install the PyE3SM software
-6. Run the PyE3SM to setup the E3SM model with the hillslope capability
-7. Run the E3SM model
+
+To reproduce the E3SM simulations, you need to follow the steps below:
+1. Install the E3SM model with the hillslope capability (https://github.com/changliao1025/E3SM/tree/changliao/elm/hillslope)
+2. Install the PyE3SM package (https://github.com/changliao1025/pye3sm)
+3. Install the PyEarth software (https://pypi.org/project/pyearth/)
+4. Download the default E3SM ELM input data, including the forcing data such as precipation and temperature, and the surface/domain data. Data can be obtained from the E3SM website (https://e3sm.org/).
+5. Download the default E3SM MOSART input data, including the river network data. Run the MOSART model to generate the river flow data. This data will be used as the boundary condition for the E3SM ELM model. An example data stream file is provided in the `data/` directory.
+6. Run the PyE3SM to setup the E3SM ELM model with the hillslope capability, an example of the case setup is provided as `codes/k34/cases/h2sc/create_customized_h2sc_elm_case_2.py`. The hillslope data generated from the HexWatershed model is used to define the subgrid hillslope in the E3SM ELM model.
+7. Run the E3SM ELM model. A default ELM spin up simulation is also recommended before running the hillslope simulation. See the above case setup file for more details.
 
 ## Reproduce my figures
 
 Use the scripts found in the `codes/k34/analysis/plot/` directory to reproduce the figures used in this publication.
-
-

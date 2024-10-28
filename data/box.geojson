@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "cell",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "cellid": 1, "longitude": -60.2093, "latitude": -2.6091, "area": 3095051869.3800473 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -60.25, -2.25, 0.0 ], [ -60.25, -2.75, 0.0 ], [ -59.75, -2.75, 0.0 ], [ -59.75, -2.25, 0.0 ], [ -60.25, -2.25, 0.0 ] ] ] } }
+]
+}

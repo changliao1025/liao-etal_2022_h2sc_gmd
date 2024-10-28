@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<file id="stream" version="1.0">
+<dataSource>
+   GENERIC
+</dataSource>
+<domainInfo>
+  <variableNames>
+     time     time     
+      xc      lon
+        yc      lat
+        area    area
+        mask    mask
+  </variableNames>
+  <filePath>
+     /compyfs/liao313/00raw/drof/
+  </filePath>
+  <fileNames>
+     mosart_domain_amazon_2d_halfdegree.nc
+  </fileNames>
+</domainInfo>
+<fieldInfo>
+   <variableNames>
+     main_channel_water_depth_liq     gage_height
+   </variableNames>
+   <filePath>
+   /compyfs/liao313/00raw/drof/noleap/
+   </filePath>
+   <fileNames>
+    drof_1980.nc
+    drof_1981.nc
+    drof_1982.nc
+    drof_1983.nc
+    drof_1984.nc
+    drof_1985.nc
+    drof_1986.nc
+    drof_1987.nc
+    drof_1988.nc
+    drof_1989.nc
+    drof_1990.nc
+    drof_1991.nc
+    drof_1992.nc
+    drof_1993.nc
+    drof_1994.nc
+    drof_1995.nc
+    drof_1996.nc
+    drof_1997.nc
+    drof_1998.nc
+    drof_1999.nc
+    drof_2000.nc
+    drof_2001.nc
+    drof_2002.nc
+    drof_2003.nc
+    drof_2004.nc
+    drof_2005.nc
+    drof_2006.nc
+    drof_2007.nc
+    drof_2008.nc
+    drof_2009.nc
+   </fileNames>
+   <offset>
+      0
+   </offset>
+</fieldInfo>
+</file>
