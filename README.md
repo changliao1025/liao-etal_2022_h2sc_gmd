@@ -9,14 +9,11 @@ Yilin Fang<sup>2</sup>,
 Teklu Tesfa<sup>2</sup>,
 Robinson Negron-Juarez<sup>3</sup>,
 
-
 <sup>1 </sup> Atmospheric Sciences and Global Change, Pacific Northwest National Laboratory, Richland, WA, USA
 
 <sup>2 </sup> Hydrology Group, Pacific Northwest National Laboratory, Richland, WA, USA
 
 <sup>3 </sup> Climate and Ecosystem Sciences Division, Lawrence Berkeley National Laboratory, Berkeley, CA, USA
-
-
 
 \* corresponding author:  chang.liao@pnnl.gov
 
