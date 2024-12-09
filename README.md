@@ -42,7 +42,12 @@ To reproduce the hillslope definition simulations, you need to follow the steps 
 1. Install the pyhexwatershed software. Please refer to HexWatershed documentation (https://hexwatershed.readthedocs.io/en/latest/) for more details.
 2. Download the DEM for the study area. This is done using the Latitude = -2.6091 and Longitude = -60.2093 to define a 0.5 degree by 0.5 degree box. Then users can use the box to download the high resolution DEM from other resources such as the SRTM data. In this study, we use the Python package `elevation` (https://pypi.org/project/elevation/) to download the DEM data. An example box geojson file is provided in the `data/input` directory.
 3. Set up and run the HexWatershed model to generate the hillslope data. In this case, the HexWatershed model is run in the elevation-only mode. See documentation for more details (https://hexwatershed.readthedocs.io/en/latest/). An example HexWatershed configuration file is provided in the `data/input/hexwatershed` directory.
-4. Due to file size limit, only a portion of the HexWatershed output is provided in the `data/output/hexwatershed` directory. The full output of one case are archived in the Zenodo repository (https://doi.org/10.5281/zenodo.14003482).
+4. Due to file size limit, only a portion of the HexWatershed output is provided in the `data/output/hexwatershed` directory. For example, the spatail maps of hillslope definition of two cases are
+<p align="middle">
+  <img src = "data/output/hexwatershed/hillslope.png" width="40%" hspace="0.25%">
+  <img src = "data/output/hexwatershed/hillslope_full.png" width="40%" hspace="0.25%">
+</p>
+The full output of one case are archived in the Zenodo repository (https://doi.org/10.5281/zenodo.14003482).
 
 To reproduce the E3SM simulations, you need to follow the steps below:
 1. Install the E3SM model with the hillslope capability (https://doi.org/10.5281/zenodo.14338209)
@@ -54,7 +59,7 @@ To reproduce the E3SM simulations, you need to follow the steps below:
     * Setup a single site case and run the simulation, see `codes/k34/cases/default/create_customized_default_elm_case.py` as an example.
     * The output are archived in the Zenodo repository (https://doi.org/10.5281/zenodo.14003482).
 5. To run the hillslope-based lateral flow model, you need to follow the steps below:
-    *. (Optional) Download the default E3SM MOSART input data, including the river network data and total runoff for the whole Amazon river basin. Run the MOSART model to generate the river flow data. This data will be used as the boundary condition for the E3SM ELM model. An example data stream file is provided in the `data/output` directory.
+    * (Optional) Download the default E3SM MOSART input data, including the river network data and total runoff for the whole Amazon river basin. Run the MOSART model to generate the river flow data. This data will be used as the boundary condition for the E3SM ELM model. An example data stream file is provided in the `data/output` directory.
     * Setup a single grid coupled ELM-MOSART case (MOSART in data mode), an example of the case setup is provided as `codes/k34/cases/hexwatershed/create_customized_h2sc_elm_case_2.py`.
     * Run with simulation with varios hillslope definition from the HexWatershed outputs. This part is partially hardcoded inside the E3SM source code.
     * The output of one case are archived in the Zenodo repository (https://doi.org/10.5281/zenodo.14003482).
