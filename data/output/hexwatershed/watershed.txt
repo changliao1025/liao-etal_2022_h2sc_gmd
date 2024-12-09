@@ -1,0 +1,25 @@
+Total number of cells: 953983
+Watershed drainage area: 8.62866e+08
+Outlet cell ID: 1586583
+Outlet longitude degree: -60.25
+Outlet latitude degree: -2.52001
+Longest stream length: 14165.2
+Total stream length: 78166
+Drainage density: 9.05887e-05
+Average slope: 0.105158
+Average left hillslope area: 2.26906e+07
+Average left hillslope length: 5124.22
+Average left hillslope width: 3990.76
+Average left hillslope slope: 0.0302196
+Average right hillslope area: 1.89478e+07
+Average right hillslope length: 4888.75
+Average right hillslope width: 3817.25
+Average right hillslope slope: 0.0269817
+Average headwater hillslope area: 4.56032e+07
+Average headwater hillslope length: 6597.98
+Average headwater hillslope width: 30.0745
+Average headwater hillslope slope: 0.0127635
+Average hillslope area: 2.60764e+07
+Average hillslope length: 5344.08
+Average hillslope width: 3082.26
+Average hillslope slope: 0.0252413
