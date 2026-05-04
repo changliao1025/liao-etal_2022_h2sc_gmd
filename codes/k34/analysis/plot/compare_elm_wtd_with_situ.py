@@ -5,6 +5,7 @@ import pandas as pd
 from pyearth.toolbox.date.dt2cal import dt2cal
 from pyearth.system.define_global_variables import *
 import matplotlib as mpl
+from matplotlib.patches import FancyArrowPatch
 from pyearth.toolbox.date.day_in_month import day_in_month
 from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 from pyearth.visual.color.create_qualitative_rgb_color_hex import create_qualitative_rgb_color_hex
@@ -14,6 +15,7 @@ from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from pyearth.toolbox.data.convert_time_series_daily_to_monthly import convert_time_series_daily_to_monthly
 
 iFlag_obs=1
 plt.rcParams["font.family"] = "Times New Roman"
@@ -52,104 +54,6 @@ iFlag_first = 1
 
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/codes/k34/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/codes/k34/case.xml'
-
-
-aDate_host=list()
-nyear = iYear_end - iYear_start + 1
-for iYear in range(iYear_start, iYear_end + 1):
-    for iMonth in range(1,13):
-        dom = day_in_month(iYear, iMonth)
-        for iDay in range(1, dom+1):
-            dSimulation = datetime(iYear, iMonth, iDay)
-            aDate_host.append( dSimulation )
-            pass
-aDate_host=np.array(aDate_host)
-nobs_host = len(aDate_host)
-aData_host = np.full( (13,nobs_host), np.nan, dtype=float)
-
-
-if iFlag_obs ==1:
-    sWorkspace_data='/qfs/people/liao313/data'
-    sModel = 'h2sc'
-    sRegion='global'
-    sWorkspace_auxiliary = sWorkspace_data + slash + sModel + slash + sRegion + slash + 'auxiliary'
-    sFilename = sWorkspace_auxiliary + slash + 'situ' + slash + 'INPA-LBA_WellData_2001_2016.xlsx'
-    xl = pd.ExcelFile(sFilename)
-    aSheet = xl.sheet_names  # see all sheet names 14, last one is summary
-
-
-    # we skip some data because language is not in english
-    #4 of them not used
-    aFlag = np.full( 13, 0, dtype=int )
-    for iSheet in np.arange(1,14, 1):
-        sSheet = aSheet[iSheet-1]
-        if sSheet == 'PZ_PT-07':
-            continue
-        if sSheet == 'PP03':
-            continue
-        if sSheet == 'PP2':
-            continue
-        if sSheet == 'PP01':
-            continue
-
-
-        aFlag[iSheet -1 ] =1
-        df = pd.read_excel(sFilename,
-                           sheet_name=sSheet,
-                           header=None,
-                           skiprows=range(5),
-                           usecols='A,E')
-        df.columns = ['Date','WTD']
-        dummy1 = df['Date']
-        dummy2 = np.array(dummy1)
-        dummy3 = dt2cal(dummy2)
-        #aDate_obs = pd.to_datetime(np.array(dummy1))
-        nobs =len(dummy3)
-        aDate_obs = list()
-        for iObs in range(nobs):
-            d1=dummy3[iObs,0]
-            d2=dummy3[iObs,1]
-            d3= dummy3[iObs,2]
-            dummy4= datetime(d1,d2 , d3 )
-            aDate_obs.append( dummy4 )
-            pass
-
-        aDate_obs= np.array(aDate_obs)
-        dummy5 = df['WTD']
-        aWTD_obs_dummy = np.array(dummy5)  # mg/l
-
-        dummy_index = aDate_obs-aDate_host[0]
-        dummy_index1 = [x.days for x in dummy_index ]
-        dummy_index1 = np.array(dummy_index1)
-        dummy_index2 = np.where( dummy_index1 < nobs_host )
-
-        dummy_obs= aWTD_obs_dummy[dummy_index2]
-        dummy_index3 = dummy_index1[dummy_index2]
-        aData_host[iSheet-1, dummy_index3 ] = dummy_obs
-        pass
-
-    #remove unused sites
-    dummy = np.where( aFlag == 1)
-    aElevation1= aElevation_obs[dummy]
-
-    aElevation2 , indices = np.unique(aElevation1, return_index=True)
-    #aOrder  = np.argsort(aElevation_obs)
-    #aElevation_sort = np.sort(aElevation2)
-    dummy2 = dummy[0][indices]
-    aData_host2 = aData_host[dummy2, :  ]
-    #get the average
-    aWTD_obs = np.nanmean(aData_host2, axis=1)
-    aWT_obs = aElevation2 - aWTD_obs
-
-    dslp = (np.max(aElevation2) - np.min(aElevation2)) / 850.0
-
-    x = ( aElevation2- np.min(aElevation2)  ) / dslp  #np.array([5]) #aElevation2
-    y0 = aElevation2
-    y1 = aWT_obs
-
-x2 = np.array([0, dHillslope_length])
-y2 = aElevation_mosart[0] + x2 * dHillslope_slope
-
 iYear_start = 2000
 iYear_end = 2009
 iMonth_start=1
@@ -213,7 +117,116 @@ aDate_subset = aDate[subset_index]
 nstress_subset= len(aDate_subset)
 #retrieve zwt
 aData_out = np.full(nstress_subset,missing_value, dtype=float)
-month_index = np.arange(2, nstress_subset, 12) #wet or dry
+iFlag_wet = 1
+if iFlag_wet == 1:
+    month_index = np.arange(2, nstress_subset, 12) #wet or dry
+else:
+    month_index = np.arange(2+6, nstress_subset, 12) #wet or dry
+
+aDate_host=list()
+nyear = iYear_end - iYear_start + 1
+for iYear in range(iYear_start, iYear_end + 1):
+    for iMonth in range(1,13):
+        dom = day_in_month(iYear, iMonth)
+        for iDay in range(1, dom+1):
+            dSimulation = datetime(iYear, iMonth, iDay)
+            aDate_host.append( dSimulation )
+            pass
+aDate_host=np.array(aDate_host)
+nobs_host = len(aDate_host)
+aData_host = np.full( (13,nobs_host), np.nan, dtype=float)
+aData_host_monthly = np.full( (13,12 * nyear), np.nan, dtype=float)
+
+
+if iFlag_obs ==1:
+    sWorkspace_data='/qfs/people/liao313/data'
+    sModel = 'h2sc'
+    sRegion='global'
+    sWorkspace_auxiliary = sWorkspace_data + slash + sModel + slash + sRegion + slash + 'auxiliary'
+    sFilename = sWorkspace_auxiliary + slash + 'situ' + slash + 'INPA-LBA_WellData_2001_2016.xlsx'
+    xl = pd.ExcelFile(sFilename)
+    aSheet = xl.sheet_names  # see all sheet names 14, last one is summary
+
+
+    # we skip some data because language is not in english
+    #4 of them not used
+    aFlag = np.full( 13, 0, dtype=int )
+    for iSheet in np.arange(1,14, 1):
+        sSheet = aSheet[iSheet-1]
+        if sSheet == 'PZ_PT-07':
+            continue
+        if sSheet == 'PP03':
+            continue
+        if sSheet == 'PP2':
+            continue
+        if sSheet == 'PP01':
+            continue
+
+
+        aFlag[iSheet -1 ] =1
+        df = pd.read_excel(sFilename,
+                           sheet_name=sSheet,
+                           header=None,
+                           skiprows=range(5),
+                           usecols='A,E')
+        df.columns = ['Date','WTD']
+        dummy1 = df['Date']
+        dummy2 = np.array(dummy1)
+        dummy3 = dt2cal(dummy2)
+        #aDate_obs = pd.to_datetime(np.array(dummy1))
+        nobs =len(dummy3)
+        aDate_obs = list()
+        for iObs in range(nobs):
+            d1=dummy3[iObs,0]
+            d2=dummy3[iObs,1]
+            d3= dummy3[iObs,2]
+            dummy4= datetime(d1,d2 , d3 )
+            aDate_obs.append( dummy4 )
+            pass
+
+        aDate_obs= np.array(aDate_obs)
+        dummy5 = df['WTD']
+        aWTD_obs_dummy = np.array(dummy5)  # mg/l
+
+        dummy_index = aDate_obs-aDate_host[0]
+        dummy_index1 = [x.days for x in dummy_index ]
+        dummy_index1 = np.array(dummy_index1)
+        dummy_index2 = np.where( dummy_index1 < nobs_host )
+
+        dummy_obs= aWTD_obs_dummy[dummy_index2]
+        dummy_index3 = dummy_index1[dummy_index2]
+        aData_host[iSheet-1, dummy_index3 ] = dummy_obs
+        dummy_daily = aData_host[iSheet-1, : ]
+        data_monthly = convert_time_series_daily_to_monthly(dummy_daily, \
+                                iYear_start, 1, 1, \
+                                iYear_end, 12, 31 , sType_in = 'mean'  )
+
+        aData_host_monthly[iSheet-1, :] = data_monthly
+        pass
+
+    #remove unused sites
+    dummy = np.where( aFlag == 1)
+    aElevation1= aElevation_obs[dummy]
+
+    aElevation2 , indices = np.unique(aElevation1, return_index=True)
+
+    dummy2 = dummy[0][indices]
+    #aData_host2_daily = aData_host[dummy2, :  ]
+    #get the average
+    aData_host2_monthly = aData_host_monthly[dummy2, :  ]
+    aData_host2_monthly_dummy = aData_host2_monthly[:,month_index]
+    aWTD_obs = np.nanmean(aData_host2_monthly_dummy, axis=1)
+    aWT_obs = aElevation2 - aWTD_obs
+
+    dslp = (np.max(aElevation2) - np.min(aElevation2)) / 850.0
+    x = ( aElevation2- np.min(aElevation2)  ) / dslp  #np.array([5]) #aElevation2
+    y0 = aElevation2
+    y1 = aWT_obs
+
+x2 = np.array([0, dHillslope_length])
+y2 = aElevation_mosart[0] + x2 * dHillslope_slope
+
+
 iStress=1
 for iYear in range(iYear_start, iYear_end + 1):
     sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
@@ -262,7 +275,8 @@ aY_all.append(y_default)
 sDate = '20240401'
 
 aData_out_wt = np.full(nstress_subset,missing_value, dtype=float)
-
+sModel = 'e3sm'
+sRegion='k34'
 for i in range(2, 11, 1):
     iCase_index = i
     x = [0, aHillslope_length[i-2]]
@@ -403,14 +417,18 @@ for i in range(nData_half):
     pass
 
 dMax_x = np.max(aHillslope_length)
-sFilename_out = 'wtd_hillslope_dry.png'
+
+if iFlag_wet == 1:
+    sFilename_out = 'wtd_hillslope_wet.png'
+else:
+    sFilename_out = 'wtd_hillslope_dry.png'
 
 fig = plt.figure(dpi=iDPI)
 fig.set_figwidth(iSize_x)
 fig.set_figheight(iSize_y)
 
 
-left, width = 0.1, 0.8
+left, width = 0.3, 0.58
 bottom, height = 0.2, 0.4
 rect_full = [left, bottom, width, height]
 ax_full = plt.axes(rect_full)
@@ -419,10 +437,10 @@ dMin_mini_x = 0
 dMax_mini_x = 80
 dMin_mini_y = 52
 dMax_mini_y = 65
-dX_mini = 0.125
-dY_mini = 0.30
-width_mini = 0.25
-heigh_mini = 0.20
+dX_mini = 0.05
+dY_mini = 0.2
+width_mini = 0.23
+heigh_mini = 0.4
 rect_mini = [dX_mini, dY_mini, width_mini, heigh_mini]
 ax_mini = plt.axes(rect_mini)
 
@@ -449,6 +467,9 @@ for iax in range(len(ax_all)):
         ax.grid(which='major', color='grey', linestyle='--', axis='y')
 
         # ax.set_aspect(dRatio)  #this one set the y / x ratio
+        #ax.tick_params(axis="y", labelsize=10, labelright=True, right=True)  # Enable right ticks and labels
+        ax.tick_params(axis="y", labelsize=10, labelright=True, right=True, labelleft=False, left=False)
+        ax.yaxis.set_label_position('right')  # Move y-axis label to the right
 
         ax.tick_params(axis="x", labelsize=10)
         ax.tick_params(axis="y", labelsize=10)
@@ -459,7 +480,10 @@ for iax in range(len(ax_all)):
 
         sLabel_x ='Length (m)'
         sLabel_y = 'Elevation (m)'
-        sTitle = 'Water table along the hillslope in February'
+        if iFlag_wet == 1:
+            sTitle = 'Water table along the hillslope in February'
+        else:
+            sTitle = 'Water table along the hillslope in August'
 
         ax.set_xlabel(sLabel_x, fontsize=12)
         ax.set_ylabel(sLabel_y, fontsize=12)
@@ -470,15 +494,69 @@ for iax in range(len(ax_all)):
         #ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter(sFormat_y))
         ax.yaxis.set_major_locator(mpl.ticker.AutoLocator())
         ax.yaxis.set_minor_locator(mpl.ticker.AutoMinorLocator())
-        ax.legend(loc='upper left',
-          fontsize=8,
+        ax.legend(loc='upper right',
+          fontsize=7,
           ncol=5)
 
+        #draw a rectange for the miniplot
+        rect = mpl.patches.Rectangle((dMin_mini_x, dMin_mini_y), dMax_mini_x-dMin_mini_x, dMax_mini_y-dMin_mini_y,
+                                    linewidth=2,  # Border thickness
+                                    edgecolor='black',  # Border color
+                                    facecolor='none',  # Transparent fill
+                                    linestyle='--'  # Dashed border
+        )
+        ax.add_patch(rect)
+        rect_bottom_left = ax.transData.transform((dMin_mini_x, dMin_mini_y))
+        rect_top_right = ax.transData.transform((dMax_mini_x, dMax_mini_y))
+        # Convert display coordinates to figure coordinates (normalized [0, 1] space)
+        rect_bottom_left_fig = fig.transFigure.inverted().transform(rect_bottom_left)
+        rect_top_right_fig = fig.transFigure.inverted().transform(rect_top_right)
+        # Extract normalized coordinates
+        dMin_mini_x_fig, dMin_mini_y_fig = rect_bottom_left_fig
+        dMax_mini_x_fig, dMax_mini_y_fig = rect_top_right_fig
+        sLabel_info_in= '(b)'
+        ax.text(0.05, 0.9, sLabel_info_in,
+                    verticalalignment='center', horizontalalignment='left',
+                    transform=ax.transAxes,
+                    color='black', fontsize=13)
     else:
         ax.set_xlim(dMin_mini_x, dMax_mini_x)
         ax.set_ylim(dMin_mini_y, dMax_mini_y)
         ax.yaxis.set_major_locator(mpl.ticker.AutoLocator())
         ax.yaxis.set_minor_locator(mpl.ticker.AutoMinorLocator())
+        bbox_mini = ax.get_position()
+        left_x_mini = bbox_mini.x0   # Center x of the miniplot
+        right_x_mini = bbox_mini.x0 + bbox_mini.width   # Center x of the miniplot
+        bottom_y_mini = bbox_mini.y0   # Center y of the miniplot
+        top_y_mini = bbox_mini.y0 + bbox_mini.height   # Center y of the miniplot
+        sLabel_info_in= '(a)'
+        ax.text(0.05, 0.9, sLabel_info_in,
+                    verticalalignment='center', horizontalalignment='left',
+                    transform=ax.transAxes,
+                    color='black', fontsize=13)
+
+ax = ax_all[0]
+#plot the arrow
+arrow_bot = FancyArrowPatch(
+            (dMin_mini_x_fig, dMin_mini_y_fig),  # Start point (bottom-left corner of the rectangle)
+            (right_x_mini, bottom_y_mini),  # End point (center of the miniplot)
+            arrowstyle="->",  # Arrow style
+            color="black",  # Arrow color
+            mutation_scale=15,  # Scale of the arrow
+            linewidth=1.5,  # Arrow thickness
+            clip_on=False,
+            transform=fig.transFigure )
+arrow_top = FancyArrowPatch(
+            (dMin_mini_x_fig, dMax_mini_y_fig),  # Start point (bottom-right corner of the rectangle)
+            (right_x_mini, top_y_mini),  # End point (center of the miniplot)
+            arrowstyle="->",  # Arrow style
+            color="black",  # Arrow color
+            mutation_scale=15,  # Scale of the arrow
+            linewidth=1.5,  # Arrow thickness
+            clip_on=False,
+            transform=fig.transFigure  )
+ax.add_patch(arrow_bot)
+ax.add_patch(arrow_top)
 
 plt.savefig(sFilename_out, bbox_inches='tight')
 plt.close('all')

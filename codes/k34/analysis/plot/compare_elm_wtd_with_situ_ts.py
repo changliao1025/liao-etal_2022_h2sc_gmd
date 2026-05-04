@@ -15,6 +15,7 @@ from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from pyearth.toolbox.data.convert_time_series_daily_to_monthly import convert_time_series_daily_to_monthly
 
 iFlag_obs=1
 plt.rcParams["font.family"] = "Times New Roman"
@@ -42,17 +43,67 @@ print(dHillslope_slope)
 aHillslope_length.append(dHillslope_length)
 aHillslope_slope.append(dHillslope_slope)
 
-iYear_start = 2001
+
+iYear_start = 2000
 iYear_end = 2009
+iMonth_start=1
+iMonth_end=12
+aDate = list()
+nyear = iYear_end - iYear_start + 1
+for iYear in range(iYear_start, iYear_end + 1):
+    for iMonth in range(iMonth_start,iMonth_end+1):
+        dSimulation = datetime(iYear, iMonth, 15)
+        aDate.append( dSimulation )
+        pass
 
-aTime = list()
-aData = list()
+nCase = 9
+nData = 12 + 3
 
-iFlag_first = 1
-
-
+#pick a year
+iYear = 2009
+sModel = 'e3sm'
+sRegion='k34'
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/codes/k34/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/liao-etal_2022_h2sc_gmd/codes/k34/case.xml'
+
+#add default
+#aLabel_legend.append('Case 1 (Default)')
+x_default = [0, dHillslope_length]
+
+aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
+print(aParameter_e3sm)
+oE3SM = pye3sm(aParameter_e3sm)
+#read default
+sDate = '20230401'
+iCase_index = 1
+sVariable = 'ZWT'
+
+aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,
+                                                           iCase_index_in =  iCase_index ,
+                                                           iYear_start_in = iYear_start,
+                                                           iYear_end_in = iYear_end,
+                                                           iYear_subset_start_in = iYear_start,
+                                                           iYear_subset_end_in = iYear_end,
+                                                           sDate_in= sDate,
+                                                           sModel_in = sModel,
+                                                           sRegion_in = sRegion,
+                                                           sVariable_in = sVariable )
+#print(aParameter_case)
+oCase = pycase(aParameter_case)
+sWorkspace_simulation_case_run = oCase.sWorkspace_simulation_case_run
+sCase = oCase.sCase
+iYear_subset_start = oCase.iYear_subset_start
+iYear_subset_end = oCase.iYear_subset_end
+iMonth = 1
+index_start = (iYear_subset_start - iYear_start)* 12 + iMonth - 1
+index_end = (iYear_subset_end + 1 - iYear_start)* 12 + iMonth - 1
+subset_index = np.arange(index_start , index_end , 1 )
+aDate=np.array(aDate)
+aDate_subset = aDate[subset_index]
+nstress_subset= len(aDate_subset)
+#retrieve zwt
+aData_out = np.full(nstress_subset,missing_value, dtype=float)
+month_index = np.arange(2+6, nstress_subset, 12)
 
 
 aDate_host=list()
@@ -67,6 +118,7 @@ for iYear in range(iYear_start, iYear_end + 1):
 aDate_host=np.array(aDate_host)
 nobs_host = len(aDate_host)
 aData_host = np.full( (13,nobs_host), np.nan, dtype=float)
+aData_host_monthly = np.full( (13,12*nyear), np.nan, dtype=float)
 
 
 if iFlag_obs ==1:
@@ -127,6 +179,12 @@ if iFlag_obs ==1:
         dummy_obs= aWTD_obs_dummy[dummy_index2]
         dummy_index3 = dummy_index1[dummy_index2]
         aData_host[iSheet-1, dummy_index3 ] = dummy_obs
+        dummy_daily = aData_host[iSheet-1, : ]
+        data_monthly = convert_time_series_daily_to_monthly(dummy_daily, \
+                                iYear_start, 1, 1, \
+                                iYear_end, 12, 31 , sType_in = 'mean'  )
+
+        aData_host_monthly[iSheet-1, :] = data_monthly
         pass
 
     #remove unused sites
@@ -134,16 +192,14 @@ if iFlag_obs ==1:
     aElevation1= aElevation_obs[dummy]
 
     aElevation2 , indices = np.unique(aElevation1, return_index=True)
-    #aOrder  = np.argsort(aElevation_obs)
-    #aElevation_sort = np.sort(aElevation2)
     dummy2 = dummy[0][indices]
-    aData_host2 = aData_host[dummy2, :  ]
+    #aData_host2_daily = aData_host[dummy2, :  ]
     #get the average
-    aWTD_obs = np.nanmean(aData_host2, axis=1)
+
+    aData_host2_monthly = aData_host_monthly[dummy2, :  ]
+    aWTD_obs = np.nanmean(aData_host2_monthly, axis=1)
     aWT_obs = aElevation2 - aWTD_obs
-
     dslp = (np.max(aElevation2) - np.min(aElevation2)) / 850.0
-
     x00 = ( aElevation2- np.min(aElevation2)  ) / dslp  #np.array([5]) #aElevation2
     y00 = aElevation2
     y10 = aWT_obs
@@ -151,63 +207,7 @@ if iFlag_obs ==1:
 x20 = np.array([0, dHillslope_length])
 y20 = aElevation_mosart[0] + x20 * dHillslope_slope
 
-iYear_start = 2000
-iYear_end = 2009
-iMonth_start=1
-iMonth_end=12
-aDate = list()
-nyear = iYear_end - iYear_start + 1
-for iYear in range(iYear_start, iYear_end + 1):
-    for iMonth in range(iMonth_start,iMonth_end+1):
-        dSimulation = datetime(iYear, iMonth, 15)
-        aDate.append( dSimulation )
-        pass
 
-nCase = 9
-nData = 12 + 3
-
-#pick a year
-iYear = 2009
-sModel = 'e3sm'
-sRegion='k34'
-
-#add default
-#aLabel_legend.append('Case 1 (Default)')
-x_default = [0, dHillslope_length]
-
-aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
-print(aParameter_e3sm)
-oE3SM = pye3sm(aParameter_e3sm)
-#read default
-sDate = '20230401'
-iCase_index = 1
-sVariable = 'ZWT'
-aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,
-                                                           iCase_index_in =  iCase_index ,
-                                                           iYear_start_in = iYear_start,
-                                                           iYear_end_in = iYear_end,
-                                                           iYear_subset_start_in = iYear_start,
-                                                           iYear_subset_end_in = iYear_end,
-                                                           sDate_in= sDate,
-                                                           sModel_in = sModel,
-                                                           sRegion_in = sRegion,
-                                                           sVariable_in = sVariable )
-#print(aParameter_case)
-oCase = pycase(aParameter_case)
-sWorkspace_simulation_case_run = oCase.sWorkspace_simulation_case_run
-sCase = oCase.sCase
-iYear_subset_start = oCase.iYear_subset_start
-iYear_subset_end = oCase.iYear_subset_end
-iMonth = 1
-index_start = (iYear_subset_start - iYear_start)* 12 + iMonth - 1
-index_end = (iYear_subset_end + 1 - iYear_start)* 12 + iMonth - 1
-subset_index = np.arange(index_start , index_end , 1 )
-aDate=np.array(aDate)
-aDate_subset = aDate[subset_index]
-nstress_subset= len(aDate_subset)
-#retrieve zwt
-aData_out = np.full(nstress_subset,missing_value, dtype=float)
-month_index = np.arange(2+6, nstress_subset, 12)
 iStress=1
 for iYear in range(iYear_start, iYear_end + 1):
     sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
@@ -300,7 +300,8 @@ axgr = AxesGrid(fig, 111, nrows_ncols=(5, 2), axes_pad=0.1, label_mode='L') # no
 
 left, width = 0.1, 0.8
 bottom, height = 0.2, 0.4
-
+sModel = 'e3sm'
+sRegion='k34'
 for iax, ax in enumerate(axgr):
     dRatio = (float((iSize_y/5))/iSize_x) /  ((110-50) / (1000))
     ax.set_aspect(dRatio, 'box')
@@ -315,6 +316,9 @@ for iax, ax in enumerate(axgr):
 
     aX_all.append(x00)
     aY_all.append(y10) #obs
+    #aWTD_obs = np.nanmean(aData_host2_monthly, axis=1)
+    #y10 = aElevation2 - aWTD_obs
+
 
     aX_all.append(x20)
     aY_all.append(y20+dElevation_diff) #mosart

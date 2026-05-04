@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 import matplotlib.text as mtext
 import matplotlib.transforms as mtransforms
 
+
+
 class RotationAwareAnnotation(mtext.Annotation):
     def __init__(self, s, xy, p, pa=None, ax=None, **kwargs):
         self.ax = ax or plt.gca()
@@ -29,7 +31,7 @@ class RotationAwareAnnotation(mtext.Annotation):
         self.angle_data = np.rad2deg(ang)
 
     def _get_rotation(self):
-        return self.ax.transData.transform_angles(np.array((self.angle_data,)), 
+        return self.ax.transData.transform_angles(np.array((self.angle_data,)),
                             np.array([self.pa[0], self.pa[1]]).reshape((1, 2)))[0]
 
     def _set_rotation(self, rotation):
@@ -38,7 +40,7 @@ class RotationAwareAnnotation(mtext.Annotation):
     _rotation = property(_get_rotation, _set_rotation)
 
 ninterval = 11
-dSlope_surface = 40 / 850 
+dSlope_surface = 40 / 850
 dArea = 3078 * 1.0e6 #m2
 dHillslope_width = np.sqrt(dArea)
 dLength_hillslope = dHillslope_width / 2
@@ -49,19 +51,19 @@ dRatio0 = 0.5  #for bedrock slope
 
 dRatio2 = 1.1 #above seepage
 dRatio3 = 0.9 #below transition
-nScenario = 19
+nScenario = 5
 #we assume that the soil thickness decreases at the elevation peak
 dThickness_critical_zone_min = dThickness_critical_zone * dRatio0
 dThickness_critical_zone_max = dThickness_critical_zone
 #we assume the bedrock is almost paralle with surface
-aDrop     = np.arange(5,81,5)
+aDrop     = np.arange(5,81,10)
 nScenario = len(aDrop)
-aIncrease = np.arange(5, nScenario*5+5,5) #np.array([ 10.0, 30.0, 70.0, 140.0, 250.0])
+aIncrease = np.arange(5, nScenario*10+5,10) #np.array([ 10.0, 30.0, 70.0, 140.0, 250.0])
 nCell = 1
 
 zwt = 44
 topo= 61
-for i in range(nCell):  
+for i in range(nCell):
     #setup an elevation profile
     aElevation_profile = np.array([  38. ,  90,  95. ,  99,
                                     103. ,  107,  111. ,  116,
@@ -71,17 +73,17 @@ for i in range(nCell):
     dElevation_max = np.max(aElevation_profile)
 
     dSlope_surface = 0.04 #40.0/850.0 #from in situ measurement
-    
+
     #do we need to adjust elevation and length?
-    #it is recommended to change the max 
+    #it is recommended to change the max
     dElevation_max = dElevation_min + dLength_hillslope * dSlope_surface
     if (dElevation_max > 8848 ) :
       dElevation_max = 8848
       dSlope_surface = (dElevation_max - dElevation_min) / dLength_hillslope
       aElevation_profile[10] = dElevation_max
-   
-    
-    
+
+
+
     #surface slope
     dElevation_difference_surface = dElevation_max - dElevation_min
     dSlope_surface = dElevation_difference_surface / dLength_hillslope
@@ -90,13 +92,13 @@ for i in range(nCell):
     dSlope_bedrock = dElevation_difference_bedrock / dLength_hillslope
 
 
-    #set reference first   
+    #set reference first
     A1 = dSlope_surface
     dSlope_surface_radian = math.atan(A1)
     #now A1 line is known
     B1 = dElevation_min
     #reference transition water table slope
-    dRatio1 = 1.0 - np.power(A1, 1.0)      
+    dRatio1 = 1.0 - np.power(A1, 1.0)
     dRatio1 = 0.25
     dSlope_water_table_reference= dSlope_surface * dRatio1
     A3 = dSlope_water_table_reference
@@ -106,85 +108,102 @@ for i in range(nCell):
     D3 = A3 * C3 + B3
     #set up range for different water table conditions
     dRange_left_without_seepage = dThickness_critical_zone
-    dRange_right_without_seepage = dThickness_critical_zone + A3 * C3  
-    #bedrock 
+    dRange_right_without_seepage = dThickness_critical_zone + A3 * C3
+    #bedrock
     A4 = dSlope_bedrock
     B4 = dElevation_min - dThickness_critical_zone
-    
-    
+
+
     #start drawing
     # start from here , we have another loop for WT dynamics
     fig = plt.figure()
-    fig.set_figwidth( 20 )
-    fig.set_figheight( 8 )
-    plt.cla()
-    ax = plt.axes()    
-   
+    fig.set_figwidth( 8 )
+    fig.set_figheight( 4 )
+
+    ax = plt.axes()
+
     #draw land surface
-    x=np.array([0, dLength_hillslope])    
+    x=np.array([0, dLength_hillslope])
     y = x * A1 + B1
     ax.set_xlabel('Distance (m)', fontsize=10)
-    ax.set_ylabel('Elevation (m)', fontsize=10)    
-    fmt = '%.1E' 
+    ax.set_ylabel('Elevation (m)', fontsize=10)
+    ax.tick_params(axis='y', pad=10)
+    fmt = '%.1E'
     xticks = mtick.FormatStrFormatter(fmt)
-    ax.xaxis.set_major_formatter(xticks)    
+    #ax.xaxis.set_major_formatter(xticks)
     ax.plot(x, y,'red',label='Surface')
     ax.set_xlim(x[0], x[1])
 
     ra = RotationAwareAnnotation("Downslope face", xy=(x[0],dElevation_min - dThickness_critical_zone), p=(x[0],dElevation_min), ax=ax,
-                             xytext=(-10,0), textcoords="offset points", va="top")
+                             xytext=(-10,0), textcoords="offset points", va="top",color="blue")
     ra = RotationAwareAnnotation("Seepage face", xy=(x[0],dElevation_min), p=(x[1],y[1]), ax=ax,
-                             xytext=(20,30), textcoords="offset points", va="top")
+                             xytext=(20,30), textcoords="offset points", va="top",color="green")
 
     #draw bedrock
     y = x * A4 + B4
     ax.plot(x,y, 'yellow',label='Bed rock')
 
-    #a1_degree = np.arctan(A1) 
-    #a2_degree = np.rad2deg( a1_degree)    
-    #dummy0 = np.array((a2_degree,)) 
-    #dummy1 = np.array( [ 0, dElevation_min ] ) 
+    #a1_degree = np.arctan(A1)
+    #a2_degree = np.rad2deg( a1_degree)
+    #dummy0 = np.array((a2_degree,))
+    #dummy1 = np.array( [ 0, dElevation_min ] )
     #dummy2 = dummy1.reshape((1, 2))
     #trans_angle = ax.transData.transform_angles(dummy0, dummy2, False )[0]
-   
-    #draw label 
-    
+
+    #draw label
+
     #ax.text(-0.03 * dLength_hillslope , dElevation_min - dThickness_critical_zone, "Downslope end", color ='blue', rotation = 90)
-   
+
     #ax.text(0.06* dLength_hillslope, dElevation_min, "Seepage face", color ='green', rotation = trans_angle)
     ra = RotationAwareAnnotation("Bedrock", xy=(x[0],y[0]), p=(x[1],y[1]), ax=ax,
-                             xytext=(2,-1), textcoords="offset points", va="top")
+                             xytext=(2,-1), textcoords="offset points", va="top", color="yellow")
 
-    iFlag_once = 1 
+    iFlag_once = 1
 
-  
+
     #right range
     dRange_left_with_seepage = dElevation_difference_surface # dElevation_difference_bedrock
-    dRange_right_with_seepage = dElevation_max - D3    
+    dRange_right_with_seepage = dElevation_max - D3
 
-    #draw transition 
+    #draw transition
     G34 = (B3-B4) / (A4-A3)
     H34 = A4 * G34 + B4
     if(G34 < dLength_hillslope):
         x=np.array([0, G34])
         y = x * A3 + B3
-        ax.plot(x,y, 'brown',label ='Water table transition')
+        ax.plot(x,y, 'brown',label ='Transitional water table')
         x= np.array([G34, dLength_hillslope])
         y = x * A3 + B3
         ax.plot(x,y, 'brown', linestyle='--' )
+
+        # Calculate the midpoint between (x[0], y[0]) and (x[1], y[1])
+        mid_x = (x[0] ) / 2
+        mid_y = (y[0] + y[1]) / 2
+
+        # Update the annotation to use the midpoint
+        ra = RotationAwareAnnotation(
+            "Transitional water table",
+            xy=(mid_x, mid_y),  # Use the midpoint as the annotation position
+            p=(x[1], y[1]),     # Keep the second point for rotation reference
+            ax=ax,
+            xytext=(0, -10),     # Offset the text slightly below the midpoint
+            textcoords="offset points",
+            va="top",
+            color="brown"
+        )
     else:
         x=np.array([0, dLength_hillslope])
         y = x * A3 + B3
         ax.plot(x,y, 'brown',label ='Water table transition')
-        
+
 
     for j in range(nScenario):
-        #water table below minimal elevation       
+        #water table below minimal elevation
 
-        
-        dHeight1 = aDrop[j]       
+
+        dHeight1 = aDrop[j]
         dElevation_water_table = dElevation_min - aDrop[j]
-        B5 = dElevation_water_table    
+        B5 = dElevation_water_table
         dDummy1 = dHeight1 / dThickness_critical_zone
         dDummy11 = np.power( dDummy1, dRatio3)
         if dDummy11 > 1.0:
@@ -195,15 +214,15 @@ for i in range(nCell):
         dDummy2 = dRange_right_without_seepage * dDummy11
         D5 = D3 -  dDummy2
         F5 = dElevation_water_table
-        dDummy3 = (D5 - F5) / dLength_hillslope      
-        A5 = dDummy3   
+        dDummy3 = (D5 - F5) / dLength_hillslope
+        A5 = dDummy3
         if A5 < 0:
             print("A5", A5)
         dSlope_watertable1 = math.atan( A5 )
         #with the slope known, we can also check the intersect length because it might intersect with the bed rock
         #intersect watertable below minimal elevation (A4 with A5)
-        #y2 = A4 * x + B4 
-        #y3 = A5 * x + B5         
+        #y2 = A4 * x + B4
+        #y3 = A5 * x + B5
         B5 = dElevation_min-dHeight1
         #x = (B5-B4) / (A4-A5)
         G45 = (B5-B4) / (A4-A5)
@@ -211,17 +230,17 @@ for i in range(nCell):
         dLength_watertable1 = G45
 
         #=========================================
-        #water table above minimal elevation/seepage          
+        #water table above minimal elevation/seepage
         #=========================================
         dHeight2 = aIncrease[j]
         if dHeight2 > dRange_left_with_seepage:
             dHeight2 = dRange_left_with_seepage
         dElevation_water_table = dElevation_min + dHeight2
-        dDummy4 = dHeight2 / dRange_left_with_seepage        
-        dDummy5 = np.power( dDummy4, dRatio2)        
-        dDummy6 = dRange_right_with_seepage * dDummy5        
-        D2 = D3 + dDummy6    
-        H12 = dElevation_water_table        
+        dDummy4 = dHeight2 / dRange_left_with_seepage
+        dDummy5 = np.power( dDummy4, dRatio2)
+        dDummy6 = dRange_right_with_seepage * dDummy5
+        D2 = D3 + dDummy6
+        H12 = dElevation_water_table
         G12 = (H12 - B1)  /  A1
         C2 = dLength_hillslope
         if D2<H12:
@@ -235,16 +254,16 @@ for i in range(nCell):
         #y2 = A4 * x + B4
         #y4 = A2 * x + B2
         #y41 = A2 * x41  + B2, where x41 and y41 are intersect between A1 and A2
-        #B2 unknown, but it could be calculated from:        
-        B2 = H12 - A2 * G12        
+        #B2 unknown, but it could be calculated from:
+        B2 = H12 - A2 * G12
         G24 = (B2-B4) / (A4-A2)
         H24 = A4 * G24 + B4
-        dLength_watertable2 = G24        
+        dLength_watertable2 = G24
         #intersect between two watertable
         G25 = (B2-B5) / (A5-A2)
-        H25 = A5 * G25 + B5  
-        
-        
+        H25 = A5 * G25 + B5
+
+
         ci = 'C' + str(j)
         if iFlag_once == 1:
             x=np.array([0, G45])
@@ -253,7 +272,7 @@ for i in range(nCell):
             x= np.array([G45, dLength_hillslope])
             y = x * A5 + B5
             ax.plot(x,y, 'blue', linestyle='--' )
-            
+
         else:
             x=np.array([0, G45])
             y = x * A5 + B5
@@ -261,7 +280,7 @@ for i in range(nCell):
             x= np.array([G45, dLength_hillslope])
             y = x * A5 + B5
             ax.plot(x,y, 'blue', linestyle='--')
-            
+
         #plot part
         x_1 = [0, G12]
         y_1 = [H12, H12]
@@ -272,18 +291,18 @@ for i in range(nCell):
             x_2 = np.array([G12, G24])
             y_2 = x_2 * A2 + B2
             x_22 = np.array([G24, dLength_hillslope])
-            y_22 = x_22 * A2 + B2 
+            y_22 = x_22 * A2 + B2
             if iFlag_once == 1:
                 ax.plot(x_1,y_1, 'green', linestyle='--')
                 ax.plot(x_2,y_2, 'green', label ='Water table with seepage')
                 ax.plot(x_22,y_22, 'green', linestyle='--')
-            
+
             else:
                 ax.plot(x_1,y_1, 'green', linestyle='--')
                 ax.plot(x_2,y_2, 'green')
                 ax.plot(x_22,y_22, 'green', linestyle='--')
-                
-        else: 
+
+        else:
             x_2 = np.array([G12, dLength_hillslope])
             y_2 = x_2 * A2 + B2
             if iFlag_once == 1:
@@ -292,15 +311,15 @@ for i in range(nCell):
             else:
                 ax.plot(x_1,y_1, 'green', linestyle='--')
                 ax.plot(x_2,y_2, 'green')
-             
 
-        
-        iFlag_once = 0    
-        
-    
-    ax.legend()
-    print("=============")            
+
+
+        iFlag_once = 0
+
+
+    ax.legend(fontsize=10, loc='lower right')
+    print("=============")
 
     sFilename = os.path.dirname(__file__) + '/slope_without_seepage' + '.png'
-    plt.savefig(sFilename )
+    plt.savefig(sFilename, bbox_inches='tight', dpi=300)
 

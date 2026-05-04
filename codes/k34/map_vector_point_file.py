@@ -26,7 +26,7 @@ from pyearth.visual.formatter import OOMFormatter
 from pyearth.visual.map.zebra_frame import zebra_frame
 from pyearth.visual.map.map_servers import StadiaStamen, EsriTerrain, EsriHydro, Stadia_terrain_images, Esri_terrain_images, Esri_hydro_images
 from pyearth.gis.gdal.read.raster.gdal_read_geotiff_file import gdal_read_geotiff_file
-import requests
+
 from PIL import Image
 from io import BytesIO
 import shapely.geometry as sgeom
@@ -506,7 +506,6 @@ def map_vector_point_file(iFiletype_in,
         pGeometry_in = pFeature.GetGeometryRef()
         sGeometry_type = pGeometry_in.GetGeometryName()
         sName = pFeature.GetField('well')
-
         if sName in aName:
             continue
 
@@ -531,6 +530,40 @@ def map_vector_point_file(iFiletype_in,
 
     x_offset = 0.1  # Adjust as needed
     y_offset = 0.0  # Adjust as needed
+
+    #plot the boundary
+    sFilename_boundary = '/qfs/people/liao313/data/hexwatershed/k34/watershed_fine.geojson'
+    pDataset = pDriver.Open(sFilename_boundary, gdal.GA_ReadOnly)
+    pLayer = pDataset.GetLayer(0)
+    for pFeature in pLayer:
+        pGeometry_in = pFeature.GetGeometryRef()
+        sGeometry_type = pGeometry_in.GetGeometryName()
+        sColor = 'red'
+        if sGeometry_type == 'POLYGON':
+            aCoords_gcs = get_geometry_coordinates(pGeometry_in)
+            #aColor.append(sColor)
+            aPolygon.append(aCoords_gcs[:, 0:2])
+        else:
+            if sGeometry_type == 'MULTIPOLYGON':
+                for j in range(pGeometry_in.GetGeometryCount()):
+                    pPolygon = pGeometry_in.GetGeometryRef(j)
+                    aCoords_gcs = get_geometry_coordinates(pPolygon)
+                    #aColor.append(sColor)
+
+                    aPolygon.append(aCoords_gcs[:, 0:2])
+        lID = lID + 1
+
+
+        aColor = sColor
+
+        if len(aPolygon) > 0:
+            aPatch = [Polygon(poly, closed=True) for poly in aPolygon]
+
+            pPC = PatchCollection(aPatch,  alpha=dAlpha, edgecolor=aColor,
+                                      facecolor='none', linewidths=2,
+                                      transform=pProjection_data)
+            ax.add_collection(pPC)
+
 
     #for i in range(len(aX_selected)):
     #    ax.text(aPoint_x[i] + x_offset, aPoint_y[i] + y_offset, aName[i], fontsize=10, color='red', transform=pProjection_data)

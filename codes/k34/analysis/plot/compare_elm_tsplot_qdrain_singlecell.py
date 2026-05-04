@@ -185,6 +185,7 @@ plot_time_series_data( aTime, aData,
                            aLinestyle_in = aLinestyle,
                            aMarker_in= aMarker,
                            aLabel_legend_in=aLabel_legend,
+                           aLocation_miniplot_in = None,
                            aLocation_legend_in = [1.0, 1.0],
                            sLocation_legend_in='upper left', #'lower right'
                            iSize_x_in = 12,
